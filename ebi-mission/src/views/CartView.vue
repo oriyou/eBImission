@@ -1,0 +1,175 @@
+<template>
+  <div>
+    <h2 class="pageTitle">
+      장바구니
+    </h2>
+    <div class="cartContents">
+      <div class="detailWrap">
+        <div class="itemController">
+          <div class="checkboxController">
+            <input type="checkbox">
+            <label>전체선택</label>
+          </div>
+          <div class="deleteBtnGroup">
+            <button class="deleteCartItem">
+              선택삭제
+            </button>
+          </div>
+        </div>
+
+        <div class="cartListWrapper">
+          <div class="cartHeader">
+            <div class="checkboxSet">
+              <input type="checkbox">
+              <label>(주)아담스패밀리</label>
+            </div>
+          </div>
+          <ul>
+            <cart-product-component />
+            <cart-product-component />
+          </ul>
+        </div>
+
+      </div>
+      <div id="sideArea">
+        <div class="priceWrap">
+          <div class="inner">
+            <div class="priceTitle">
+              결제예정금액
+            </div>
+            <div class="priceList">
+              <dl>상품금액 </dl>
+              <dl>배송비 </dl>
+              <dl>상품할인금액 </dl>
+            </div>
+            <dl class="totalPrice">
+              <dt>총 ?건</dt>
+              <dt class="price">
+                <strong>1,000,000</strong>
+                <span>원</span>
+              </dt>
+            </dl>
+            <v-btn depressed color="#ef2a23">주문하기</v-btn>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import {CartApi} from '~/api';
+import {CartProductComponent} from '~/components';
+
+export default {
+  components: { CartProductComponent },
+  name: 'CartView',
+  data: function() {
+    return {
+      cart: [],
+    }
+  },
+  created: function() {
+    this.getCart();
+  },
+  methods: {
+    getCart: function() {
+      CartApi.getCart()
+        .then(cart => {
+          this.cart = cart;
+          console.log(this.cart);
+        });
+    },
+  }
+}
+</script>
+
+<style>
+  .pageTitle {
+    padding: 14px 0;
+    margin-bottom: 30px;
+    font-size: 36px;
+    line-height: 52px;
+    letter-spacing: -1.1px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+  }
+  .cartContents {
+    position: relative;
+    min-height: 390px;
+    margin-top: 40px;
+    margin-bottom: 80px;
+  }
+  .detailWrap {
+    width: 786px;
+  }
+  #sideArea {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 298px;
+    height: 100%;
+  }
+  .cartContents ul {
+    list-style: none;
+  }
+  .cartContents  ul  li:first-child {
+    border-top: none;
+  }
+  .cartContents  ul  li {
+    padding: 24px 10px 24px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+  }
+  .inner {
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 24px 20px 20px 20px;
+  }
+  .priceTitle {
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: 28px;
+  }
+  .priceList {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 18px;
+  }
+  .cartHeader {
+    height: 53px;
+    padding: 0 20px 0 19px;
+    border-bottom: 1px solid #eee;
+  }
+  .cartListWrapper {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .checkboxSet label {
+    font-size: 18px;
+    line-height: 53px;
+    font-weight: 800;
+    color: #333;
+    vertical-align: middle;
+    padding-left: 10px;
+  }
+  .deleteBtnGroup {
+    float: right;
+  }
+  .checkboxController {
+    float: left;
+  }
+  .checkboxController input[type='checkbox'] {
+    margin-right: 10px;
+  }
+  
+  .itemController {
+    width: 100%;
+    padding: 0 0 12px;
+    float: left;
+  }
+</style>

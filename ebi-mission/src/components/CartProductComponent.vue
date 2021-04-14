@@ -1,0 +1,123 @@
+<template>
+  <li>
+    <div class="cartProduct">
+      <input type="checkbox">
+      <div class="productItem">
+        <div class="productThumb">
+          <a>
+            <v-img src="https://contents.lotteon.com/itemimage/_v154151/LE/13/18/22/07/24/bndl_img/LE1318220724_1.jpg" />
+          </a>
+        </div>
+        <div class="productData">
+          <p><strong>설화수</strong>본윤선크림 50ml</p>
+          <p class="productDeliveryInfo">
+            4/14(수) 이내 도착확률 82%
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="cartQty"> 
+      <button class="minus" />
+      <div class="number">
+        <input type="number" id="number_00" max="5">
+        <label for="number_00" class="blind"></label>
+      </div>
+      <button class="plus" />
+    </div>
+    <div class="cartPrice">
+      <p>
+        <strong>68,000</strong>
+        원
+      </p>
+    </div>
+  </li>
+</template>
+
+<script>
+export default {
+  name: 'CartProductComponent',
+}
+</script>
+
+<style>
+  .productItem {
+    padding-left: 28px;
+    display: flex;
+  }
+  .productThumb {
+    height: 80px;
+    width: 80px;
+    margin-right: 12px;
+  }
+  .productItem .productThumb {
+    width: 80px;
+    min-width: 80px;
+    height: 80px;
+    
+  }
+  .productThumb a {
+    background: #e5e5e5;
+    width: 80px;
+    height: 80px;
+  }
+  .productThumb a .v-image {
+    border-radius: 6px;
+  }
+  .cartProduct {
+    position: relative;
+    padding-right: 56px;
+    border-right: 1px solid #ddd;
+  }
+  .cartProduct input[type=checkBox] {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .productItem .productData .productDeliveryInfo {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.57;
+    color: #4185ed;
+  }
+  .cartQty {
+    min-width: 70px;
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100px;
+    height: 32px;
+    margin: 0 20px;
+  }
+  .cartQty .minus {
+    overflow: hidden;
+    width: 100px;
+    height: 30px;
+    background: url('//static.lotteon.com/p/order/assets/img/btn_minus.svg') no-repeat 50%;
+  }
+  .cartQty .plus {
+    overflow: hidden;
+    width: 100px;
+    height: 30px;
+    background: url('//static.lotteon.com/p/order/assets/img/btn_plus.svg') no-repeat 50%;
+  }
+  .cartQty .number input {
+    padding: 0;
+    width: 100%;
+    line-height: 30px;
+    border: 0;
+    text-align: center;
+  }
+  .cartQty .number {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .cartPrice {
+    padding-left: 20px;
+    border-left: 1px solid #ddd;
+  }
+</style>

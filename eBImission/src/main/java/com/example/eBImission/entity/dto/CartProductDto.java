@@ -1,0 +1,21 @@
+package com.example.eBImission.entity.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CartProductDto {
+    private int cartSn;
+    private String trNo;
+    private String spdNm;
+    private String brdNm;
+    private String slPrc;
+    private String estmtDlvTxt;
+    private int odQty;
+    private String spdNo;
+    private String sitmNo;
+    private String mbNo;
+}
