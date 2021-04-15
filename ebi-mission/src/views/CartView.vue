@@ -23,18 +23,9 @@
           </div>
         </div>
 
-        <div class="cartListWrapper">
-          <div class="cartHeader">
-            <div class="checkboxSet">
-              <input type="checkbox">
-              <label>(주)아담스패밀리</label>
-            </div>
-          </div>
-          <ul>
-            <cart-product-component />
-            <cart-product-component />
-          </ul>
-        </div>
+        <cart-list-component />
+        <cart-list-component />
+        <cart-list-component />
 
       </div>
       <div id="sideArea">
@@ -65,10 +56,10 @@
 
 <script>
 import {CartApi} from '~/api';
-import {CartProductComponent} from '~/components';
+import {CartListComponent} from '~/components';
 
 export default {
-  components: { CartProductComponent },
+  components: { CartListComponent },
   name: 'CartView',
   data: function() {
     return {
@@ -144,6 +135,8 @@ export default {
     padding: 24px 10px 24px 20px;
     border-top: 1px solid #eee;
     display: flex;
+    position: relative;
+    width: 100%;
   }
   .inner {
     width: 100%;

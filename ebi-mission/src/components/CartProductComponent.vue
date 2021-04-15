@@ -30,6 +30,8 @@
         원
       </p>
     </div>
+    <button type="button" class="deleteItem">
+    </button>
   </li>
 </template>
 
@@ -40,6 +42,9 @@ export default {
 </script>
 
 <style>
+  .cartListWrapper+.cartListWrapper {
+    margin-top: 25px;
+  }
   .productItem {
     padding-left: 28px;
     display: flex;
@@ -72,6 +77,9 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
+  }
+  .productItem .producData {
+    width: 100%;
   }
   .productItem .productData .productDeliveryInfo {
     margin-top: 6px;
@@ -119,5 +127,19 @@ export default {
   .cartPrice {
     padding-left: 20px;
     border-left: 1px solid #ddd;
+    min-width: 166px;
+    text-align: center;
+  }
+  .deleteItem {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100% 100%;
+    background-image: url(//static.lotteon.com/p/order/assets/img/icon_delete-item_new.svg);
   }
 </style>

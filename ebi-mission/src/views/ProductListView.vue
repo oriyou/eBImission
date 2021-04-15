@@ -46,6 +46,7 @@ export default {
   },
   watch: {
     '$route.params': function() {
+      // data 초기화
       Object.assign(this.$data, this.$options.data());
 
       // 정렬 초기화
