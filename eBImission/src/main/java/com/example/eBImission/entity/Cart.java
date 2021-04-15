@@ -20,23 +20,23 @@ import java.util.UUID;
 public class Cart{
     @Id
     @Column("cart_sn")
-    private int cartSn;
+    private int cartSn;     // 장바구니 순번
     @Column("tr_no")
-    private String trNo;
+    private String trNo;    // 거래처번호 (그룹 기준)
     @Column("lrtr_no")
-    private String lrtrNo;
-    @Column("mb_no")
-    private String mbNo;
+    private String lrtrNo;  // 하위거래처번호호
+   @Column("mb_no")
+    private String mbNo;    // 회원번호
     @Column("spd_no")
-    private String spdNo;
+    private String spdNo;   // 상품번호
     @Column("sitm_no")
-    private String sitmNo;
+    private String sitmNo;  // 단품번호
     @Column("od_qty")
-    private int odQty;
+    private int odQty;      // 주문수량
     @Column("reg_dttm")
-    private LocalDateTime regDttm;
+    private LocalDateTime regDttm;  // 등록날짜
     @Column("mod_dttm")
-    private LocalDateTime modDttm;
+    private LocalDateTime modDttm;  // 수정날짜
 
 //    @Override
 //    public String getId() {

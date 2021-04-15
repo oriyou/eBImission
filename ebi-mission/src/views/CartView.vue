@@ -23,9 +23,11 @@
           </div>
         </div>
 
-        <cart-list-component />
-        <cart-list-component />
-        <cart-list-component />
+        <cart-list-component
+          v-for="group, index in this.groupingCartArr"
+          :group="group"
+          :key="index"
+        />
 
       </div>
       <div id="sideArea">
@@ -63,7 +65,7 @@ export default {
   name: 'CartView',
   data: function() {
     return {
-      cart: {},
+      groupingCartArr: [],
     }
   },
   created: function() {
@@ -72,19 +74,22 @@ export default {
   methods: {
     getCart: async function() {
       let cartData = [];
+      let groupingCart = {};
       await CartApi.getCart()
         .then(cart => {
           cartData = cart;
         });
 
       cartData.forEach(e => {    
-        if(!Object.keys(this.cart).includes(e.trNo)) {
-          this.cart[e.trNo] = [];
+        if(!Object.keys(groupingCart).includes(e.trNo)) {
+          groupingCart[e.trNo] = [];
         }
-        this.cart[e.trNo].push(e);
+        groupingCart[e.trNo].push(e);
       });
-      console.log(this.cart);
-      // console.log(Object.keys(this.cart)[0]);
+
+      Object.keys(groupingCart).forEach(key => {
+        this.groupingCartArr.push(groupingCart[key])
+      });
     },
     allClick: function(event) {
       const parentNode = event.target.parentNode;

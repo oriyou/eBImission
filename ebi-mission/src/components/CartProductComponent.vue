@@ -1,17 +1,19 @@
 <template>
-  <li>
+  <li v-if="product">
     <div class="cartProduct">
       <input type="checkbox">
       <div class="productItem">
         <div class="productThumb">
           <a>
-            <v-img src="https://contents.lotteon.com/itemimage/_v154151/LE/13/18/22/07/24/bndl_img/LE1318220724_1.jpg" />
+            <v-img
+              :src="img"
+            />
           </a>
         </div>
         <div class="productData">
-          <p><strong>설화수</strong>본윤선크림 50ml</p>
+          <p><strong>{{product.brdNm}}</strong> {{product.spdNm}} </p>
           <p class="productDeliveryInfo">
-            4/14(수) 이내 도착확률 82%
+            {{this.product.estmtDlvTxt}}
           </p>
         </div>
       </div>
@@ -19,14 +21,14 @@
     <div class="cartQty"> 
       <button class="minus" />
       <div class="number">
-        <input type="number" id="number_00" max="5">
+        <input type="number" id="number_00" :value="product.odQty" max="5">
         <label for="number_00" class="blind"></label>
       </div>
       <button class="plus" />
     </div>
     <div class="cartPrice">
       <p>
-        <strong>68,000</strong>
+        <strong>{{product.slPrc ? product.slPrc : 0}}</strong>
         원
       </p>
     </div>
@@ -36,8 +38,18 @@
 </template>
 
 <script>
+import {CartProductDto} from '~/model';
+
 export default {
   name: 'CartProductComponent',
+  props: {
+    product: new CartProductDto(),
+  },
+  computed: {
+    img : function() {
+      return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
+    }
+  }
 }
 </script>
 
@@ -88,7 +100,7 @@ export default {
     color: #4185ed;
   }
   .cartQty {
-    min-width: 70px;
+    min-width: 100px;
     display: flex;
     border: 1px solid #ddd;
     border-radius: 6px;

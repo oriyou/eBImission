@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 
 @Service
@@ -28,7 +29,8 @@ public class CartServiceImpl implements CartService {
     public Flux<CartProductDto> retrieveCart() {
 
         final String END_POINT_URI = "https://pbf.lotteon.com/product/v1/detail/productDetailList?dataType=LIGHT2";
-        Flux<Cart> cart = cartRepository.findAll();
+//        Flux<Cart> cart = cartRepository.findAll();
+        Flux<Cart> cart = cartRepository.findAllOrderByRegDttm();
 
         WebClient webClient = WebClient.create();
         Flux<CartProductDto> productInfo = webClient.post()
@@ -69,4 +71,5 @@ public class CartServiceImpl implements CartService {
     public Mono<Void> removeCart(Cart cart) {
         return cartRepository.delete(cart);
     }
+
 }

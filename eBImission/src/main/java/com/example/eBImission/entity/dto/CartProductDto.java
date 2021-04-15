@@ -18,4 +18,5 @@ public class CartProductDto {
     private String spdNo;
     private String sitmNo;
     private String mbNo;
+    private ImgJsn[] imgJsn;
 }

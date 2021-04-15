@@ -12,7 +12,6 @@ class ProductApi {
   async getCart() {
     return (await this.client.get('cart')).data;
   }
-
 }
 
 const instance = new ProductApi();
