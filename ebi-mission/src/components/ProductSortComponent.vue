@@ -1,7 +1,7 @@
 <template>
   <div class="sortArea">
     <div class="total">
-      총 <strong>{{total}}</strong>개
+      총 <strong>{{totalCount}}</strong>개
     </div>
     <div class="rightSet">
       <div class="boardCheckList">
@@ -19,43 +19,18 @@
 <script>
 export default {
   name: 'ProductSortComponent',
-  props: {
-    'totalCount' : Number,
-  },
-  data: function() {
-    return {
-      dropdown: [{text: '60개씩보기'}, {text: '120개씩보기'}],
-    }
-  },
-  computed: {
-    total: function() {
-      return (this.totalCount >= 1000 ? '999+' : this.totalCount)
-    }
-  },
-  watch: {
-    '$route.params.dshopNo' : 'resetSort'
-  },
+  props: [
+    'totalCount',
+  ],
   methods: {
     sort(code, event) {
-      this.$emit('newSortCd', code);
-      const childNodes = event.target.parentNode.childNodes;
-      Array.from(childNodes).forEach(element => {
-        element.classList.remove('selected');
-      });
-      event.target.classList.add('selected');
-    },
-    resetSort() {
-      const childNodes = document.querySelector('.boardCheckList > ul').childNodes;
-      Array.from(childNodes).forEach( element => {
-        element.classList.remove('selected');
-      });
-      childNodes[0].classList.add('selected');
+      this.$emit('newSortCd', code, event);
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
   .sortArea {
     width: 100%;
     height: 50px;

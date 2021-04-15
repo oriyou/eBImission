@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'CategoryComponent',
+  name: 'ProductCategoryComponent',
   props: {    
     item : Object,
   },

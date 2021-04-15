@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import {CartApi} from '~/api';
 
 export default {
   name: 'ProductListComponent',
@@ -51,8 +50,7 @@ export default {
   },
   methods : {
     cart() {
-      CartApi.register(this.product.toCart()).then(res => console.log(res));
-      alert('장바구니에 등록되었습니다.')
+      this.$emit('cart', this.product);
     }
   }
 }

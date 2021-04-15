@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartService {
                         .map(e -> e.path("data"))
                         .flatMapMany(Flux::fromIterable)
                         .map(e -> new Gson().fromJson(String.valueOf(e), CartProductDto.class));
-                      
+
         return productInfo.zipWith(cart, (i, s) -> {
             i.setCartSn(s.getCartSn());
             i.setOdQty(s.getOdQty());

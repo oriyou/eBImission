@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="grey lighten-5">
     <product-sort-component 
-      :totalCount="this.totalCount"
+      :totalCount="computedTotalCount"
       @newSortCd="getSortCd"
     />
     <v-row
@@ -10,6 +10,7 @@
         v-for="product in productList" 
         :key="product.spdNo"
         :product="toProduct(product)"
+        @cart="registerInCart"
       />
     </v-row>
     <pagination-component
@@ -24,6 +25,7 @@
 import axios from 'axios';
 import {ProductListComponent, ProductSortComponent, PaginationComponent} from '~/components';
 import {Product} from '~/model';
+import {CartApi} from '~/api';
 
 export default {
   name: "ProductListView",
@@ -45,6 +47,14 @@ export default {
   watch: {
     '$route.params': function() {
       Object.assign(this.$data, this.$options.data());
+
+      // 정렬 초기화
+      const childNodes = document.querySelector('.boardCheckList > ul').childNodes;
+      Array.from(childNodes).forEach( element => {
+        element.classList.remove('selected');
+      });
+      childNodes[0].classList.add('selected');
+
       this.fetchData();
     },
     'pdSortCd': 'fetchData',
@@ -56,6 +66,9 @@ export default {
   computed: {
     length: function() {
       return Math.round(this.totalCount/60);
+    },
+    computedTotalCount: function() {
+       return (this.totalCount >= 1000 ? '999+' : this.totalCount)
     }
   },
   methods: {
@@ -70,11 +83,22 @@ export default {
     toProduct(product) {
       return new Product(product)
     },
-    getSortCd(newSortCd) {
+    getSortCd(newSortCd, event) {
       this.pdSortCd = newSortCd;
+
+      // selected 추가
+      const childNodes = event.target.parentNode.childNodes;
+      Array.from(childNodes).forEach(element => {
+        element.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
     },
     getPageNo(pageNo) {
       this.pageNo = pageNo;
+    },
+    registerInCart(product) {
+      CartApi.register(product.toCart()).then(res => console.log(res));
+      alert('장바구니에 등록되었습니다.')
     }
   }
 }
@@ -108,4 +132,5 @@ export default {
   .col {
     flex-grow: unset;
   }
+
 </style>
