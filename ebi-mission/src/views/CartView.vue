@@ -6,14 +6,20 @@
     <div class="cartContents">
       <div class="detailWrap">
         <div class="itemController">
-          <div class="checkboxController">
+          <div 
+            class="checkboxController"
+            @click="allClick"
+          >
             <input type="checkbox">
             <label>전체선택</label>
           </div>
           <div class="deleteBtnGroup">
-            <button class="deleteCartItem">
+            <v-btn 
+              class="deleteCartItem"
+              small
+            >
               선택삭제
-            </button>
+            </v-btn>
           </div>
         </div>
 
@@ -66,19 +72,37 @@ export default {
   name: 'CartView',
   data: function() {
     return {
-      cart: [],
+      cart: {},
     }
   },
   created: function() {
     this.getCart();
   },
   methods: {
-    getCart: function() {
-      CartApi.getCart()
+    getCart: async function() {
+      let cartData = [];
+      await CartApi.getCart()
         .then(cart => {
-          this.cart = cart;
-          console.log(this.cart);
+          cartData = cart;
         });
+
+      cartData.forEach(e => {    
+        if(!Object.keys(this.cart).includes(e.trNo)) {
+          this.cart[e.trNo] = [];
+        }
+        this.cart[e.trNo].push(e);
+      });
+      console.log(this.cart);
+      // console.log(Object.keys(this.cart)[0]);
+    },
+    allClick: function(event) {
+      const parentNode = event.target.parentNode;
+      let isChecked = parentNode.querySelector('input[type=checkbox').checked;
+      parentNode.querySelector('input[type=checkbox').checked = !isChecked;
+      const inputArr = parentNode.parentNode.parentNode.querySelectorAll('input[type=checkbox]');
+      inputArr.forEach(element => {
+        element.checked = !isChecked;
+      });
     },
   }
 }
@@ -162,6 +186,9 @@ export default {
   }
   .checkboxController {
     float: left;
+  }
+  .checkboxController:hover, .checkboxController > label:hover {
+    cursor: pointer;
   }
   .checkboxController input[type='checkbox'] {
     margin-right: 10px;

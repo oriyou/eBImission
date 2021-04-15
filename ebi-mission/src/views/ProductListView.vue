@@ -6,7 +6,7 @@
     />
     <v-row
     >
-      <product-list-component
+      <product-component
         v-for="product in productList" 
         :key="product.spdNo"
         :product="toProduct(product)"
@@ -23,14 +23,14 @@
 
 <script>
 import axios from 'axios';
-import {ProductListComponent, ProductSortComponent, PaginationComponent} from '~/components';
+import {ProductComponent, ProductSortComponent, PaginationComponent} from '~/components';
 import {Product} from '~/model';
 import {CartApi} from '~/api';
 
 export default {
   name: "ProductListView",
   components: { 
-    ProductListComponent, 
+    ProductComponent, 
     ProductSortComponent, 
     PaginationComponent 
   },

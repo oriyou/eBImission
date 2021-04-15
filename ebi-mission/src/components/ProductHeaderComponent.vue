@@ -31,9 +31,6 @@ export default {
   props: {
     category: Array,
   },
-  created: function() {
-    console.log(this.category);
-  },
   methods: {
     handleCategory(dshopNo) {
       this.$router.push(`/product/${dshopNo}`)
