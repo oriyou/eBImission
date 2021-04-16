@@ -19,12 +19,12 @@
       </div>
     </div>
     <div class="cartQty"> 
-      <button class="minus" />
+      <button class="minus" @click="minusOdQty"/>
       <div class="number">
         <input type="number" id="number_00" :value="product.odQty" max="5">
         <label for="number_00" class="blind"></label>
       </div>
-      <button class="plus" />
+      <button class="plus" @click="plusOdQty"/>
     </div>
     <div class="cartPrice">
       <p>
@@ -48,6 +48,14 @@ export default {
   computed: {
     img : function() {
       return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
+    }
+  },
+  methods: {
+    minusOdQty: function() {
+      this.product.odQty--;
+    },
+    plusOdQty: function() {
+      this.product.odQty++;
     }
   }
 }
@@ -92,6 +100,7 @@ export default {
   }
   .productItem .producData {
     width: 100%;
+    width: 271px;
   }
   .productItem .productData .productDeliveryInfo {
     margin-top: 6px;

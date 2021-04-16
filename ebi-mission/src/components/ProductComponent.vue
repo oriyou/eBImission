@@ -28,7 +28,6 @@
             class="slQty">
             {{product.mmSlQty}}개 구매
           </span>
-          
         </div>
         <div><span class="price">{{price}}</span>원</div>
       </v-card-text>

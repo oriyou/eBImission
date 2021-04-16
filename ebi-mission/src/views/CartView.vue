@@ -44,7 +44,7 @@
             <dl class="totalPrice">
               <dt>총 ?건</dt>
               <dt class="price">
-                <strong>1,000,000</strong>
+                <strong>?</strong>
                 <span>원</span>
               </dt>
             </dl>

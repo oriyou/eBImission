@@ -44,12 +44,13 @@ public class CartServiceImpl implements CartService {
                         .flatMapMany(Flux::fromIterable)
                         .map(e -> new Gson().fromJson(String.valueOf(e), CartProductDto.class));
 
-        return productInfo.zipWith(cart, (i, s) -> {
-            i.setCartSn(s.getCartSn());
-            i.setOdQty(s.getOdQty());
-            i.setMbNo(s.getMbNo());
+        // cartSn, odQty, mbNo 추가
+        return productInfo.zipWith(cart, (product, cartProduct) -> {
+            product.setCartSn(cartProduct.getCartSn());
+            product.setOdQty(cartProduct.getOdQty());
+            product.setMbNo(cartProduct.getMbNo());
 
-            return i;
+            return product;
         });
     }
 
