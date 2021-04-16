@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import {ProductComponent, ProductSortComponent, PaginationComponent} from '~/components';
 import {Product} from '~/model';
-import {CartApi} from '~/api';
+import {ProductApi, CartApi} from '~/api';
 
 export default {
   name: "ProductListView",
@@ -36,6 +36,7 @@ export default {
   },
   data: function() {
     return {
+      catePdList: [],
       productList: [],
       pdSortCd: '01',
       pageNo: 1,
@@ -75,11 +76,13 @@ export default {
   methods: {
     async fetchData() {
       this.dshopNo = this.$route.params.dshopNo;
-      const catePdList = await axios.get('https://www.lotteon.com/p/display/category/seltCatePdWishListAjax', 
-      {params: {pdSortCd: this.pdSortCd, pageNo: this.pageNo, rowsPerPage: this.rowsPerPage, dshopNo: this.dshopNo}})
-      .then(result => result.data.catePdList);
-      this.productList = catePdList.dataList;
-      this.totalCount = catePdList.totalCount;
+      await ProductApi.retrieveProductList(this.pdSortCd, this.pageNo, this.rowsPerPage, this.dshopNo)
+              .then(result => {
+                this.catePdList = result.data.catePdList
+              })
+
+      this.productList = this.catePdList.dataList;
+      this.totalCount = this.catePdList.totalCount;
     },
     toProduct(product) {
       return new Product(product)

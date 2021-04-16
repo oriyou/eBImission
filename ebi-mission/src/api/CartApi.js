@@ -1,6 +1,6 @@
 import AixosClient from "./AxiosClient";
 
-class ProductApi {
+class CartApi {
   constructor() {
     this.client = new AixosClient('/api');
   }
@@ -14,6 +14,6 @@ class ProductApi {
   }
 }
 
-const instance = new ProductApi();
+const instance = new CartApi();
 
 export default instance;
