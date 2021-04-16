@@ -1,7 +1,9 @@
 package com.example.eBImission.controller;
 
 import com.example.eBImission.entity.Cart;
+import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
+import com.example.eBImission.entity.dto.ProductInfoDto;
 import com.example.eBImission.service.CartService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,9 @@ public class CartController {
     }
 
     @PostMapping
-    public Mono<Cart> registerCartProduct(@RequestBody Cart cart) {
-        return cartService.registerCart(cart);
+    public Mono<Cart> registerCartProduct(@RequestBody CartDto cartDto) {
+
+        return cartService.registerCart(cartDto);
     }
 
     @PutMapping

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// Json 입력값에 대하여 Mapping 시 클래스에 선언되지 않은 property 무시
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CartProductDto {
     private int cartSn;

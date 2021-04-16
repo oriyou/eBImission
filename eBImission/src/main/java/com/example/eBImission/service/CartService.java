@@ -1,17 +1,15 @@
 package com.example.eBImission.service;
 
 import com.example.eBImission.entity.Cart;
+import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
-import com.fasterxml.jackson.databind.JsonNode;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.awt.print.Pageable;
 
 public interface CartService {
 
     Flux<CartProductDto> retrieveCart();
-    Mono<Cart> registerCart(Cart cart);
+    Mono<Cart> registerCart(CartDto cartDto);
     Mono<Cart> modifyCart(Cart cart);
     Mono<Void> removeCart(Cart cart);
 }

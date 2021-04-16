@@ -1,4 +1,4 @@
-import Cart from './Cart';
+import {CartDto} from '~/model';
 
 class Product {
     constructor(product) {
@@ -15,16 +15,10 @@ class Product {
         this.imgFullUrl = product.imgFullUrl;
         this.trNo = product.trNo;
         this.lrtrNo = product.lrtrNo;
-        this.spdNo = product.spdNo;
-        this.odQty = product.odQty;
-        this.regDttm = product.regDttm;
-        this.modDttm = product.modDttm;
     }
 
     toCart() {
-        const cart = new Cart(this.trNo, this.lrtrNo, this.spdNo, this.sitmNo, 1);
-        
-        return cart;
+        return new CartDto(this.spdNo, this.sitmNo, 1);
     }
 }
 export default Product

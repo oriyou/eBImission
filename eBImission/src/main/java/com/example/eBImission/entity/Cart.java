@@ -3,11 +3,18 @@ package com.example.eBImission.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.With;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Persistent;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
@@ -17,7 +24,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("om_cart")
-public class Cart{
+public class Cart {
+
     @Id
     @Column("cart_sn")
     private int cartSn;     // 장바구니 순번
@@ -25,7 +33,7 @@ public class Cart{
     private String trNo;    // 거래처번호 (그룹 기준)
     @Column("lrtr_no")
     private String lrtrNo;  // 하위거래처번호호
-   @Column("mb_no")
+    @Column("mb_no")
     private String mbNo;    // 회원번호
     @Column("spd_no")
     private String spdNo;   // 상품번호
@@ -34,19 +42,10 @@ public class Cart{
     @Column("od_qty")
     private int odQty;      // 주문수량
     @Column("reg_dttm")
+    @CreatedDate
     private LocalDateTime regDttm;  // 등록날짜
     @Column("mod_dttm")
+    @LastModifiedDate
     private LocalDateTime modDttm;  // 수정날짜
 
-//    @Override
-//    public String getId() {
-//        return this.cartSn;
-//    }
-//
-//    @Override
-//    public boolean isNew() {
-//        boolean result = Objects.isNull(cartSn);
-//        this.cartSn = result ? String.valueOf(UUID.randomUUID()) : this.cartSn;
-//        return result;
-//    }
 }

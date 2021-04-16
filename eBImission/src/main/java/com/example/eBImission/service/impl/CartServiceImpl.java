@@ -1,14 +1,14 @@
 package com.example.eBImission.service.impl;
 
-import com.example.eBImission.config.WebClientConfig;
 import com.example.eBImission.entity.Cart;
+import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
+import com.example.eBImission.entity.dto.ProductInfoDto;
 import com.example.eBImission.service.CartService;
 import com.example.eBImission.repository.CartRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -18,22 +18,23 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.awt.print.Pageable;
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
+    private final String END_POINT_URI = "https://pbf.lotteon.com/product/v1/detail/productDetailList?dataType=LIGHT2";
+
     private final CartRepository cartRepository;
     private final WebClient webClient;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public Flux<CartProductDto> retrieveCart() {
 
-        final String END_POINT_URI = "https://pbf.lotteon.com/product/v1/detail/productDetailList?dataType=LIGHT2";
+
 //        Flux<Cart> cart = cartRepository.findAll();
-        ObjectMapper mapper = new ObjectMapper();
+//        ObjectMapper mapper = new ObjectMapper();
         Flux<Cart> cart = cartRepository.findAllOrderByRegDttm();
 
         /*
@@ -77,16 +78,42 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Mono<Cart> registerCart(Cart cart) {
-        LocalDateTime date = LocalDateTime.now();
-        cart.setRegDttm(date);
-        return cartRepository.save(cart);
+    public Mono<Cart> registerCart(CartDto cartDto) {
+
+        return webClient.mutate()
+                .build()
+                .post()
+                .uri(END_POINT_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Flux.just(cartDto), CartDto.class)
+                .retrieve()
+                .bodyToMono(ProductInfoDto.class)
+                .filter(productInfoDto -> productInfoDto.getReturnCode() == "500")
+                .map(e -> {
+                    System.out.println(e.getReturnCode());
+                    if(e.getReturnCode()=="500")
+                        throw new RuntimeException("500 Error");
+                    return e.getData();
+                })
+                .flatMapMany(carts -> Flux.just(carts))
+                .next()
+                .filter(cart -> {
+                    throw new RuntimeException("lrtrNo is Null");
+                })
+                .map(c -> {
+                    c.setMbNo(cartDto.getMbNo());
+                    c.setOdQty(cartDto.getOdQty());
+
+                    cartRepository.save(c).subscribe();
+
+                    return c;
+                });
+
     }
 
     @Override
     public Mono<Cart> modifyCart(Cart cart) {
-        LocalDateTime date = LocalDateTime.now();
-        cart.setModDttm(date);
         return cartRepository.save(cart);
     }
 

@@ -53,9 +53,13 @@ export default {
   methods: {
     minusOdQty: function() {
       this.product.odQty--;
+      // this.product.slPrc = parseInt(this.product.slPrc)
+      this.prodcut.slPrc -= this.product.slPrc;
     },
     plusOdQty: function() {
       this.product.odQty++;
+      // this.product.slPrc = parseInt(this.product.slPrc)
+      this.product.slPrc += this.product.slPrc;
     }
   }
 }
@@ -68,6 +72,7 @@ export default {
   .productItem {
     padding-left: 28px;
     display: flex;
+    width: 385px;
   }
   .productThumb {
     height: 80px;
