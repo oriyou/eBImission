@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.ProxyProvider;
 
 @Configuration
 @Slf4j
@@ -52,12 +53,17 @@ public class WebClientConfig {
                                                     )
                                             )
                                     // TCP 연결시 ConnectionTimeOut, ReadTimeOut, WriteTimeOut을 적용하는 설정을 추가하였다.
-                                    .tcpConfiguration(
-                                                client -> client.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 120_000)
-                                            .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(180))
-                                                                        .addHandlerLast(new WriteTimeoutHandler(180))
-                                            )
+                                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 8000)
+                                    .doOnConnected(conn -> conn.addHandler(new ReadTimeoutHandler(180))
+                                                .addHandler(new WriteTimeoutHandler(180))
                                     )
+//
+//                                    .tcpConfiguration(
+//                                                client -> client.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 120_000)
+//                                            .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(180))
+//                                                                        .addHandlerLast(new WriteTimeoutHandler(180))
+//                                            )
+//                                    )
                         )
                 )
                 .exchangeStrategies(exchangeStrategies)
