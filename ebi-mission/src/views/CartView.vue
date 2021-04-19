@@ -28,7 +28,7 @@
           :group="group"
           :key="index"
         />
-        
+      
       </div>
       <div id="sideArea">
         <div class="priceWrap">
@@ -37,14 +37,23 @@
               결제예정금액
             </div>
             <div class="priceList">
-              <dl>상품금액 </dl>
-              <dl>배송비 </dl>
-              <dl>상품할인금액 </dl>
+              <dl>
+                <dt> 상품금액 </dt>
+                <dd> {{this.computedTotalPrice}}원 </dd>
+              </dl>
+              <dl>
+                <dt> 배송비 </dt>
+                <dd> 0원 </dd>
+              </dl>
+              <dl>
+                <dt> 상품할인금액 </dt>
+                <dd> 0원 </dd>
+              </dl>
             </div>
             <dl class="totalPrice">
-              <dt>총 ?건</dt>
+              <dt>총 {{this.totalOdQty}}건</dt>
               <dt class="price">
-                <strong>?</strong>
+                <strong>{{this.computedTotalPrice}}</strong>
                 <span>원</span>
               </dt>
             </dl>
@@ -59,28 +68,40 @@
 <script>
 import {CartApi} from '~/api';
 import {CartListComponent} from '~/components';
+import {EventBus} from '~/utils';
 
 export default {
   components: { CartListComponent },
   name: 'CartView',
   data: function() {
     return {
+      originCartArr: [],
       groupingCartArr: [],
+      totalPrice: 0,
+      totalOdQty: 0,
     }
   },
-  created: function() {
-    this.getCart();
+  created: async function() {
+    await this.getCart();
+    this.initTotalPriceAndOdQty();
+    // EventBus 이벤트 구독
+    EventBus.$on('addTotalValue', this.addTotalValue);
+    EventBus.$on('minusTotalValue', this.minusTotalValue);
+  },
+  computed: {
+    computedTotalPrice: function() {
+      return this.totalPrice.toLocaleString('ko-KR');
+    }
   },
   methods: {
     getCart: async function() {
-      let cartData = [];
       let groupingCart = {};
       await CartApi.getCart()
         .then(cart => {
-          cartData = cart;
+          this.originCartArr = cart;
         });
 
-      cartData.forEach(e => {    
+      this.originCartArr.forEach(e => {    
         if(!Object.keys(groupingCart).includes(e.trNo)) {
           groupingCart[e.trNo] = [];
         }
@@ -90,6 +111,17 @@ export default {
       Object.keys(groupingCart).forEach(key => {
         this.groupingCartArr.push(groupingCart[key])
       });
+      /*
+      {
+        "LE10002" : [
+          
+        ],
+        "LE10003" : [
+
+        ],
+        ...
+      }
+      */
     },
     allClick: function(event) {
       const parentNode = event.target.parentNode;
@@ -100,6 +132,24 @@ export default {
         element.checked = !isChecked;
       });
     },
+    initTotalPriceAndOdQty: function() {
+      this.originCartArr.forEach(item => {
+        this.totalPrice += item.slPrc*1
+        this.totalOdQty += item.odQty*1
+      });
+    },
+    addTotalValue: function(product) {
+      this.totalPrice += product.slPrc*1;
+      this.totalOdQty++;
+    },
+    minusTotalValue: function(product) {
+      this.totalPrice -= product.slPrc*1;
+      this.totalOdQty--;
+    },
+  },
+  beforeDestroy: function() {
+    EventBus.$off('addTotalValue');
+    EventBus.$off('minusTotalValue');
   }
 }
 </script>
@@ -191,10 +241,31 @@ export default {
   .checkboxController input[type='checkbox'] {
     margin-right: 10px;
   }
-  
   .itemController {
     width: 100%;
     padding: 0 0 12px;
     float: left;
+  }
+  #sideArea .priceWrap .priceList dl dt {
+    position: relative;
+    width: 50%;
+    display: table-cell;
+    padding-top: 3px;
+    font-size: 14px;
+    color: #757575;
+    line-height: 1.57;
+    vertical-align: top;
+    white-space: normal;
+  }
+  #sideArea .priceWrap .priceList dl dd {
+    font-size: 16px;
+    width: 50%;
+    display: table-cell;
+    position: relative;
+    text-align: right;
+    font-weight: 700;
+    word-break: break-all;
+    vertical-align: top;
+    line-height: 1.57;
   }
 </style>

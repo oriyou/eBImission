@@ -39,6 +39,7 @@
 
 <script>
 import {CartProductDto} from '~/model';
+import {EventBus} from '~/utils';
 
 export default {
   name: 'CartProductComponent',
@@ -60,6 +61,7 @@ export default {
       if(this.product.odQty > 1) {
         this.product.odQty--;
         this.totalPrice -= this.product.slPrc*1;
+        EventBus.$emit('minusTotalValue', this.product);  // EventBus 이벤트 발행
       } else {
         alert('최소1개까지 구매 가능한 상품입니다.')
       }
@@ -67,6 +69,7 @@ export default {
     plusOdQty: function() {
       this.product.odQty++;
       this.totalPrice += this.product.slPrc*1;
+      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
     }
   }
 }
