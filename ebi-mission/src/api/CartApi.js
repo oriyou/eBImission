@@ -6,11 +6,11 @@ class CartApi {
   }
 
   async register(cart) {
-    return this.client.post('cart', cart);
+    return this.client.post('/cart', cart);
   }
 
   async getCart() {
-    return (await this.client.get('cart')).data;
+    return (await this.client.get('/cart')).data;
   }
 }
 

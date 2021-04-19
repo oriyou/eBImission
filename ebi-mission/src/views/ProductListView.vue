@@ -101,8 +101,14 @@ export default {
       this.pageNo = pageNo;
     },
     registerInCart(product) {
-      CartApi.register(product.toCart()).then(res => console.log(res));
-      alert('장바구니에 등록되었습니다.')
+      CartApi.register(product.toCart())
+        .then(res => {
+          console.log(res)
+          if(res.data == "") 
+            alert("❌장바구니 등록에 실패하였습니다.")
+          else
+            alert("장바구니에 등록되었습니다.")
+        });
     }
   }
 }

@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductInfoDto {
+public class ProductInfoResponse {
 
     private String returnCode;
     private Cart[] data;
+
+    public void setMbNo(String mbNo) {
+    }
 }

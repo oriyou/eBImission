@@ -3,7 +3,7 @@ package com.example.eBImission.service.impl;
 import com.example.eBImission.entity.Cart;
 import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
-import com.example.eBImission.entity.dto.ProductInfoDto;
+import com.example.eBImission.entity.dto.ProductInfoResponse;
 import com.example.eBImission.service.CartService;
 import com.example.eBImission.repository.CartRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -88,19 +88,20 @@ public class CartServiceImpl implements CartService {
                 .accept(MediaType.APPLICATION_JSON)
                 .body(Flux.just(cartDto), CartDto.class)
                 .retrieve()
-                .bodyToMono(ProductInfoDto.class)
-                .filter(productInfoDto -> productInfoDto.getReturnCode() == "500")
+                .bodyToMono(ProductInfoResponse.class)
                 .map(e -> {
                     System.out.println(e.getReturnCode());
-                    if(e.getReturnCode()=="500")
+                    // 500에러 일때 RuntimeException
+                    if(e.getReturnCode().equals("500"))
                         throw new RuntimeException("500 Error");
                     return e.getData();
                 })
+                // Mono<Cart[]> -> Flux<Cart>
                 .flatMapMany(carts -> Flux.just(carts))
+                // Flux<Cart> -> Mono<Cart>
                 .next()
-                .filter(cart -> {
-                    throw new RuntimeException("lrtrNo is Null");
-                })
+                // lrtrNo가 null이면 거름
+                .filter(cart -> cart.getLrtrNo() != null)
                 .map(c -> {
                     c.setMbNo(cartDto.getMbNo());
                     c.setOdQty(cartDto.getOdQty());

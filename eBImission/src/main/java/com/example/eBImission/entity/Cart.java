@@ -28,7 +28,7 @@ public class Cart {
 
     @Id
     @Column("cart_sn")
-    private int cartSn;     // 장바구니 순번
+    private String cartSn;     // 장바구니 순번
     @Column("tr_no")
     private String trNo;    // 거래처번호 (그룹 기준)
     @Column("lrtr_no")
