@@ -47,5 +47,4 @@ public class Cart {
     @Column("mod_dttm")
     @LastModifiedDate
     private LocalDateTime modDttm;  // 수정날짜
-
 }

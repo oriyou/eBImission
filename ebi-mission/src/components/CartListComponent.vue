@@ -12,7 +12,6 @@
         :product="item"
         :key="item.cartSn"
       />
-      <cart-product-component />
     </ul>
   </div>
 </template>

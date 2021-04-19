@@ -21,4 +21,5 @@ class Product {
         return new CartDto(this.spdNo, this.sitmNo, 1);
     }
 }
+
 export default Product

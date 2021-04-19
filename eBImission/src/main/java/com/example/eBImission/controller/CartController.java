@@ -3,6 +3,7 @@ package com.example.eBImission.controller;
 import com.example.eBImission.entity.Cart;
 import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
+import com.example.eBImission.entity.dto.CartRequest;
 import com.example.eBImission.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,9 @@ public class CartController {
     }
 
     @PostMapping
-    public Mono<Cart> registerCartProduct(@RequestBody CartDto cartDto) {
+    public Mono<Cart> registerCartProduct(@RequestBody CartRequest cartRequest) {
 
-        return cartService.registerCart(cartDto);
+        return cartService.registerCart(cartRequest);
     }
 
     @PutMapping

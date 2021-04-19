@@ -3,6 +3,7 @@ package com.example.eBImission.service.impl;
 import com.example.eBImission.entity.Cart;
 import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
+import com.example.eBImission.entity.dto.CartRequest;
 import com.example.eBImission.entity.dto.ProductInfoResponse;
 import com.example.eBImission.service.CartService;
 import com.example.eBImission.repository.CartRepository;
@@ -78,7 +79,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Mono<Cart> registerCart(CartDto cartDto) {
+    public Mono<Cart> registerCart(CartRequest cartRequest) {
 
         return webClient.mutate()
                 .build()
@@ -86,7 +87,7 @@ public class CartServiceImpl implements CartService {
                 .uri(END_POINT_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(Flux.just(cartDto), CartDto.class)
+                .body(Flux.just(cartRequest), CartRequest.class)
                 .retrieve()
                 .bodyToMono(ProductInfoResponse.class)
                 .map(e -> {
@@ -96,19 +97,20 @@ public class CartServiceImpl implements CartService {
                         throw new RuntimeException("500 Error");
                     return e.getData();
                 })
-                // Mono<Cart[]> -> Flux<Cart>
-                .flatMapMany(carts -> Flux.just(carts))
-                // Flux<Cart> -> Mono<Cart>
+                // Mono<CartDto[]> -> Flux<CartDto>
+                .flatMapMany(cartDtoArr -> Flux.just(cartDtoArr))
+                // Flux<CartDto> -> Mono<CartDto>
                 .next()
-                // lrtrNo가 null이면 거름
-                .filter(cart -> cart.getLrtrNo() != null)
-                .map(c -> {
-                    c.setMbNo(cartDto.getMbNo());
-                    c.setOdQty(cartDto.getOdQty());
+                // returnCode가 200인 것들만 필터링
+                .filter(cart -> cart.getReturnCode().equals("200"))
+                .map(cartDto -> {
+                    cartDto.setMbNo(cartRequest.getMbNo());
+                    cartDto.setOdQty(cartRequest.getOdQty());
 
-                    cartRepository.save(c).subscribe();
+                    Cart cart = cartDto.toCart();
+                    cartRepository.save(cart).subscribe();
 
-                    return c;
+                    return cart;
                 });
 
     }

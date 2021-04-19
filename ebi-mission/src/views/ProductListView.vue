@@ -107,7 +107,7 @@ export default {
           if(res.data == "") 
             alert("❌장바구니 등록에 실패하였습니다.")
           else
-            alert("장바구니에 등록되었습니다.")
+            alert("🔵장바구니에 등록되었습니다.")
         });
     }
   }

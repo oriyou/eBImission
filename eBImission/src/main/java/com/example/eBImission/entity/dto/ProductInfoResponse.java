@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 public class ProductInfoResponse {
 
     private String returnCode;
-    private Cart[] data;
+    private CartDto[] data;
 
-    public void setMbNo(String mbNo) {
-    }
 }

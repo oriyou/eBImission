@@ -28,7 +28,7 @@
           :group="group"
           :key="index"
         />
-
+        
       </div>
       <div id="sideArea">
         <div class="priceWrap">

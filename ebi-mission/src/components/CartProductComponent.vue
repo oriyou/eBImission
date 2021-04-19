@@ -13,7 +13,7 @@
         <div class="productData">
           <p><strong>{{product.brdNm}}</strong> {{product.spdNm}} </p>
           <p class="productDeliveryInfo">
-            {{this.product.estmtDlvTxt}}
+            {{product.estmtDlvTxt}}
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="cartPrice">
       <p>
-        <strong>{{product.slPrc ? product.slPrc : 0}}</strong>
+        <strong v-if="this.totalPrice">{{this.totalPrice}}</strong>
         원
       </p>
     </div>
@@ -45,6 +45,11 @@ export default {
   props: {
     product: new CartProductDto(),
   },
+  data: function() {
+    return {
+      totalPrice: parseInt(this.product.slPrc),
+    }
+  },
   computed: {
     img : function() {
       return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
@@ -52,14 +57,16 @@ export default {
   },
   methods: {
     minusOdQty: function() {
-      this.product.odQty--;
-      // this.product.slPrc = parseInt(this.product.slPrc)
-      this.prodcut.slPrc -= this.product.slPrc;
+      if(this.product.odQty > 1) {
+        this.product.odQty--;
+        this.totalPrice -= this.product.slPrc*1;
+      } else {
+        alert('최소1개까지 구매 가능한 상품입니다.')
+      }
     },
     plusOdQty: function() {
       this.product.odQty++;
-      // this.product.slPrc = parseInt(this.product.slPrc)
-      this.product.slPrc += this.product.slPrc;
+      this.totalPrice += this.product.slPrc*1;
     }
   }
 }

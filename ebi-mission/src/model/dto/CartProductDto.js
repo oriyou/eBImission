@@ -13,6 +13,10 @@ class CartProductDto {
     this.mbNo = mbNo;
     this.imgJsn = imgJsn;
   }
+  
+  toCart(jsonObj) {
+    return new CartProductDto(jsonObj.trNo, jsonObj.spdNm, jsonObj.brdNm, jsonObj.lPrc, jsonObj.estmtDlvTxt, jsonObj.odQty, jsonObj.spdNo, jsonObj.sitmNo, jsonObj.mbNo, jsonObj.imgJsn)
+  }
 }
 
 export default CartProductDto;

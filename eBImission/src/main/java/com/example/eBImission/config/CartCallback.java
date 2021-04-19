@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,11 +35,12 @@ public class CartCallback implements BeforeConvertCallback<Cart> {
     }
 
     private String getTodayStr() {
-        return LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
     }
 
-    private String getCartSeq() {
+    private static String getCartSeq() {
         int generatedSeq = cartSeq.incrementAndGet();
-        return String.format("%05d", generatedSeq);
+        return String.format("%04d", generatedSeq);
     }
+
 }
