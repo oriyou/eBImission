@@ -82,11 +82,12 @@ export default {
     }
   },
   created: async function() {
-    await this.getCart();
+    await this.retrieveCart();
     this.initTotalPriceAndOdQty();
     // EventBus 이벤트 구독
     EventBus.$on('addTotalValue', this.addTotalValue);
     EventBus.$on('minusTotalValue', this.minusTotalValue);
+    EventBus.$on('deleteCartProduct', this.deleteCartProduct);
   },
   computed: {
     computedTotalPrice: function() {
@@ -94,9 +95,9 @@ export default {
     }
   },
   methods: {
-    getCart: async function() {
+    retrieveCart: async function() {
       let groupingCart = {};
-      await CartApi.getCart()
+      await CartApi.retrieveCart()
         .then(cart => {
           this.originCartArr = cart;
         });
@@ -108,20 +109,21 @@ export default {
         groupingCart[e.trNo].push(e);
       });
 
+      /*
+      groupingCartArr =
+                {
+                  "LE10002" : [
+                    
+                  ],
+                  "LE10003" : [
+
+                  ],
+                  ...
+                }
+      */
       Object.keys(groupingCart).forEach(key => {
         this.groupingCartArr.push(groupingCart[key])
       });
-      /*
-      {
-        "LE10002" : [
-          
-        ],
-        "LE10003" : [
-
-        ],
-        ...
-      }
-      */
     },
     selectAll: function(event) {
       const parentNode = event.target.parentNode;
@@ -149,10 +151,15 @@ export default {
       this.totalOdQty--;
       CartApi.modify(product)
     },
+    deleteCartProduct: function(productArr) {
+      CartApi.remove(productArr);
+      this.$router.go();
+    }
   },
   beforeDestroy: function() {
     EventBus.$off('addTotalValue');
     EventBus.$off('minusTotalValue');
+    EventBus.$off('deleteCartProduct');
   }
 }
 </script>

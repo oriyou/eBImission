@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartDto {
 
+    private String cartSn;
     private String trNo;
     private String lrtrNo;
     private String spdNo;

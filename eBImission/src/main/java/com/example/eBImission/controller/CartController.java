@@ -1,12 +1,11 @@
 package com.example.eBImission.controller;
 
 import com.example.eBImission.entity.Cart;
-import com.example.eBImission.entity.dto.CartProductDto;
-import com.example.eBImission.entity.dto.CartRequest;
+import com.example.eBImission.entity.dto.CartDto;
+import com.example.eBImission.entity.dto.CartProductInfoDto;
 import com.example.eBImission.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,14 +17,14 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping
-    public Flux<CartProductDto> getCartProducts() {
+    public Flux<CartProductInfoDto> getCartProducts() {
         return cartService.retrieveCart();
     }
 
     @PostMapping
-    public Mono<Cart> registerCartProduct(@RequestBody CartRequest cartRequest) {
+    public Mono<Cart> registerCartProduct(@RequestBody CartDto cartDto) {
 
-        return cartService.registerCart(cartRequest);
+        return cartService.registerCart(cartDto);
     }
 
     @PutMapping
@@ -33,8 +32,8 @@ public class CartController {
         return cartService.modifyCart(cart);
     }
 
-    @DeleteMapping
-    public Flux<Cart> deleteCart(@RequestBody Flux<Cart> cartProducts) {
+    @PostMapping("/remove")
+    public Flux<Cart> deleteCart(@RequestBody Flux<CartDto> cartProducts) {
         return cartService.removeCart(cartProducts);
     }
 

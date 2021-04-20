@@ -32,8 +32,11 @@
         원
       </p>
     </div>
-    <button type="button" class="deleteItem">
-    </button>
+    <button 
+      type="button" 
+      class="deleteItem"
+      @click="this.deleteCartProduct"
+    />
   </li>
 </template>
 
@@ -75,6 +78,12 @@ export default {
         alert('최소1개까지 구매 가능한 상품입니다.');
       }
     },
+    deleteCartProduct: function() {
+      let arr = [];
+      arr.push(this.product);
+      console.log(arr);
+      EventBus.$emit('deleteCartProduct', arr);
+    }
   }
 }
 </script>

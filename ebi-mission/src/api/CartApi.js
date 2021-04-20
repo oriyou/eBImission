@@ -9,12 +9,16 @@ class CartApi {
     return (await this.client.post('cart', cart)).data;
   }
 
-  async getCart() {
+  async retrieveCart() {
     return (await this.client.get('cart')).data;
   }
 
   async modify(cart) {
     return this.client.put('cart', cart);
+  }
+
+  async remove(cart) {
+    return this.client.post('cart/remove', cart);
   }
 }
 
