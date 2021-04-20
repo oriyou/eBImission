@@ -57,20 +57,24 @@ export default {
     }
   },
   methods: {
+    plusOdQty: function() {
+      this.product.odQty++;
+      const price = this.product.slPrc*1;
+      this.totalPrice += price;
+      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
+      this.$emit('addGroupPrice', price)
+    },
     minusOdQty: function() {
+      const price = this.product.slPrc*1;
       if(this.product.odQty > 1) {
         this.product.odQty--;
-        this.totalPrice -= this.product.slPrc*1;
+        this.totalPrice -= price;
         EventBus.$emit('minusTotalValue', this.product);  // EventBus 이벤트 발행
+        this.$emit('minusGroupPrice', price)
       } else {
         alert('최소1개까지 구매 가능한 상품입니다.')
       }
     },
-    plusOdQty: function() {
-      this.product.odQty++;
-      this.totalPrice += this.product.slPrc*1;
-      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
-    }
   }
 }
 </script>

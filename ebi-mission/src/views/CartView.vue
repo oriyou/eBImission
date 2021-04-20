@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <cart-list-component
+        <cart-group-component
           v-for="group, index in this.groupingCartArr"
           :group="group"
           :key="index"
@@ -67,11 +67,11 @@
 
 <script>
 import {CartApi} from '~/api';
-import {CartListComponent} from '~/components';
+import {CartGroupComponent} from '~/components';
 import {EventBus} from '~/utils';
 
 export default {
-  components: { CartListComponent },
+  components: { CartGroupComponent },
   name: 'CartView',
   data: function() {
     return {
@@ -267,5 +267,18 @@ export default {
     word-break: break-all;
     vertical-align: top;
     line-height: 1.57;
+  }
+  .cartListWrapper .cartFooter {
+    display: flex;
+    height: 48px;
+    padding: 0 20px;
+    font-size: 13px;
+    line-height: 48px;
+    color: #757575;
+    border-top: 1px solid #eee;
+    justify-content: space-between;
+  }
+  .cartListWrapper .cartFooter .groupPrice {
+    float: right;
   }
 </style>

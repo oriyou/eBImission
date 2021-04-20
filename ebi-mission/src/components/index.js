@@ -4,4 +4,4 @@ export {default as ProductCategoryComponent} from './ProductCategoryComponent.vu
 export {default as ProductSortComponent} from './ProductSortComponent.vue';
 export {default as PaginationComponent} from './PaginationComponent.vue';
 export {default as CartProductComponent} from './CartProductComponent.vue';
-export {default as CartListComponent} from './CartListComponent.vue';
+export {default as CartGroupComponent} from './CartGroupComponent.vue';
