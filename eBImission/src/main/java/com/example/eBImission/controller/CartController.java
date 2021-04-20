@@ -1,12 +1,12 @@
 package com.example.eBImission.controller;
 
 import com.example.eBImission.entity.Cart;
-import com.example.eBImission.entity.dto.CartDto;
 import com.example.eBImission.entity.dto.CartProductDto;
 import com.example.eBImission.entity.dto.CartRequest;
 import com.example.eBImission.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -34,8 +34,8 @@ public class CartController {
     }
 
     @DeleteMapping
-    public Mono<Void> deleteCart(@RequestBody Cart cart) {
-        return cartService.removeCart(cart);
+    public Flux<Cart> deleteCart(@RequestBody Flux<Cart> cartProducts) {
+        return cartService.removeCart(cartProducts);
     }
 
 }

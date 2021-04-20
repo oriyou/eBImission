@@ -1,5 +1,6 @@
 package com.example.eBImission.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("om_cart")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Cart {
 
     @Id
@@ -47,4 +49,5 @@ public class Cart {
     @Column("mod_dttm")
     @LastModifiedDate
     private LocalDateTime modDttm;  // 수정날짜
+
 }

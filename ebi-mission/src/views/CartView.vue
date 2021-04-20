@@ -8,7 +8,7 @@
         <div class="itemController">
           <div 
             class="checkboxController"
-            @click="allClick"
+            @click="selectAll"
           >
             <input type="checkbox">
             <label>전체선택</label>
@@ -123,7 +123,7 @@ export default {
       }
       */
     },
-    allClick: function(event) {
+    selectAll: function(event) {
       const parentNode = event.target.parentNode;
       let isChecked = parentNode.querySelector('input[type=checkbox').checked;
       parentNode.querySelector('input[type=checkbox').checked = !isChecked;
@@ -134,17 +134,20 @@ export default {
     },
     initTotalPriceAndOdQty: function() {
       this.originCartArr.forEach(item => {
-        this.totalPrice += item.slPrc*1
-        this.totalOdQty += item.odQty*1
+        this.totalPrice += item.slPrc*item.odQty;
+        this.totalOdQty += item.odQty*1;
       });
     },
     addTotalValue: function(product) {
       this.totalPrice += product.slPrc*1;
       this.totalOdQty++;
+      console.lo
+      CartApi.modify(product)
     },
     minusTotalValue: function(product) {
       this.totalPrice -= product.slPrc*1;
       this.totalOdQty--;
+      CartApi.modify(product)
     },
   },
   beforeDestroy: function() {

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -36,7 +37,11 @@ public class CartServiceImpl implements CartService {
 
 //        Flux<Cart> cart = cartRepository.findAll();
 //        ObjectMapper mapper = new ObjectMapper();
-        Flux<Cart> cart = cartRepository.findAllOrderByRegDttm();
+        Flux<Cart> cart = cartRepository.findAllCartByRegDttm();
+
+//        Flux<GroupedFlux<String, Cart>> groupedCart = cartRepository.findAllCartByRegDttm()
+//                .groupBy(prod -> prod.getTrNo());
+//        groupedCart.subscribe(System.out::println);
 
         /*
         WebClient webClient = WebClient.create();
@@ -73,6 +78,7 @@ public class CartServiceImpl implements CartService {
             product.setCartSn(cartProduct.getCartSn());
             product.setOdQty(cartProduct.getOdQty());
             product.setMbNo(cartProduct.getMbNo());
+            product.setRegDttm(cartProduct.getRegDttm());
 
             return product;
         });
@@ -97,12 +103,12 @@ public class CartServiceImpl implements CartService {
                         throw new RuntimeException("500 Error");
                     return e.getData();
                 })
-                // Mono<CartDto[]> -> Flux<CartDto>
+                // Mono<CartDto[]> -> Flux<CartDto>2
                 .flatMapMany(cartDtoArr -> Flux.just(cartDtoArr))
                 // Flux<CartDto> -> Mono<CartDto>
                 .next()
-                // returnCode가 200인 것들만 필터링
-                .filter(cart -> cart.getReturnCode().equals("200"))
+                // returnCode가 200이고 lrtrNo가 null이 아닌지 필터링
+                .filter(cart -> cart.getReturnCode().equals("200") && cart.getLrtrNo() != null)
                 .map(cartDto -> {
                     cartDto.setMbNo(cartRequest.getMbNo());
                     cartDto.setOdQty(cartRequest.getOdQty());
@@ -112,7 +118,6 @@ public class CartServiceImpl implements CartService {
 
                     return cart;
                 });
-
     }
 
     @Override
@@ -121,8 +126,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Mono<Void> removeCart(Cart cart) {
-        return cartRepository.delete(cart);
+    public Flux<Cart> removeCart(Flux<Cart> cart) {
+        return cart.flatMap(item -> {
+            cartRepository.deleteCartByCartSn(item.getCartSn()).subscribe();
+            return Mono.just(item);
+        });
     }
 
 }

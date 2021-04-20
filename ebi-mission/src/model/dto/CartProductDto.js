@@ -1,8 +1,9 @@
 
 class CartProductDto {
-  constructor(cartSn, trNo, spdNm, brdNm, slPrc, estmtDlvTxt, odQty, spdNo, sitmNo, mbNo, imgJsn) {
+  constructor(cartSn, trNo, lrtrNo, spdNm, brdNm, slPrc, estmtDlvTxt, odQty, spdNo, sitmNo, mbNo, imgJsn, regDttm) {
     this.cartSn = cartSn;
     this.trNo = trNo;
+    this.lrtrNo = lrtrNo;
     this.spdNm = spdNm;
     this.brdNm = brdNm;
     this.slPrc = slPrc; 
@@ -12,6 +13,7 @@ class CartProductDto {
     this.sitmNo = sitmNo;
     this.mbNo = mbNo;
     this.imgJsn = imgJsn;
+    this.regDttm = regDttm;
   }
   
   toCart(jsonObj) {

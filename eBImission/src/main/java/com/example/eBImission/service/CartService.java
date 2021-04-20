@@ -12,5 +12,5 @@ public interface CartService {
     Flux<CartProductDto> retrieveCart();
     Mono<Cart> registerCart(CartRequest cartRequest);
     Mono<Cart> modifyCart(Cart cart);
-    Mono<Void> removeCart(Cart cart);
+    Flux<Cart> removeCart(Flux<Cart> cart);
 }

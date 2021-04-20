@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class CartProductDto {
     private String cartSn;
     private String trNo;
+    private String lrtrNo;
     private String spdNm;
     private String brdNm;
     private String slPrc;
@@ -21,5 +24,6 @@ public class CartProductDto {
     private String spdNo;
     private String sitmNo;
     private String mbNo;
+    private LocalDateTime regDttm;
     private ImgJsn[] imgJsn;
 }

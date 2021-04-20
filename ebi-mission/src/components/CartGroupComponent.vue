@@ -49,7 +49,7 @@ export default {
   methods: {
     calculateGroupPrice: function() {
       this.group.forEach(item => {
-        this.groupPrice += item.slPrc*1;
+        this.groupPrice += item.slPrc*item.odQty;
       })
     },
     addGroupPrice: function(price) {
