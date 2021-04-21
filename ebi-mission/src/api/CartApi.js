@@ -17,8 +17,8 @@ class CartApi {
     return this.client.put('cart', cart);
   }
 
-  async remove(cart) {
-    return this.client.post('cart/remove', cart);
+  async remove(cartSnArr) {
+    return this.client.post('cart/remove', cartSnArr);
   }
 }
 

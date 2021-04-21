@@ -14,7 +14,8 @@
             <label>전체선택</label>
           </div>
           <div class="deleteBtnGroup">
-            <v-btn 
+            <v-btn
+              @click="deleteSelected" 
               class="deleteCartItem"
               small
             >
@@ -24,6 +25,7 @@
         </div>
 
         <cart-group-component
+          class="cartGroup"
           v-for="group, index in this.groupingCartArr"
           :group="group"
           :key="index"
@@ -126,10 +128,9 @@ export default {
       });
     },
     selectAll: function(event) {
-      const parentNode = event.target.parentNode;
-      let isChecked = parentNode.querySelector('input[type=checkbox').checked;
-      parentNode.querySelector('input[type=checkbox').checked = !isChecked;
-      const inputArr = parentNode.parentNode.parentNode.querySelectorAll('input[type=checkbox]');
+      const isChecked = event.target.parentNode.querySelector('input[type=checkbox').checked;
+      event.target.parentNode.querySelector('input[type=checkbox').checked = !isChecked;
+      const inputArr = event.target.parentNode.parentNode.parentNode.querySelectorAll('input[type=checkbox]');
       inputArr.forEach(element => {
         element.checked = !isChecked;
       });
@@ -153,6 +154,18 @@ export default {
     },
     deleteCartProduct: function(productArr) {
       CartApi.remove(productArr);
+      this.$router.go();
+    },
+    deleteSelected: function() {
+      let cartSnArr = [];
+      const cartGroups = document.querySelectorAll('.cartGroup ul');
+      cartGroups.forEach(group => {
+        const inputs = group.querySelectorAll('input[type=checkbox');
+        inputs.forEach(input => {
+          input.checked ? cartSnArr.push(input.value) : '';
+        });
+      });
+      CartApi.remove(cartSnArr);
       this.$router.go();
     }
   },
@@ -231,6 +244,10 @@ export default {
     overflow: hidden;
     width: 100%;
   }
+  .checkboxSet {
+    display: inline-block;
+    z-index: 1;
+  }
   .checkboxSet label {
     font-size: 18px;
     line-height: 53px;
@@ -245,7 +262,8 @@ export default {
   .checkboxController {
     float: left;
   }
-  .checkboxController:hover, .checkboxController > label:hover {
+  .checkboxController:hover, .checkboxController > label:hover,
+   .checkboxSet:hover, .checkboxSet > label:hover {
     cursor: pointer;
   }
   .checkboxController input[type='checkbox'] {

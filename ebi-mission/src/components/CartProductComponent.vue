@@ -1,7 +1,10 @@
 <template>
   <li v-if="product">
     <div class="cartProduct">
-      <input type="checkbox">
+      <input type="checkbox" 
+        @click="selectOne"
+        :value="product.cartSn"
+      >
       <div class="productItem">
         <div class="productThumb">
           <a>
@@ -79,10 +82,10 @@ export default {
       }
     },
     deleteCartProduct: function() {
-      let arr = [];
-      arr.push(this.product);
-      console.log(arr);
-      EventBus.$emit('deleteCartProduct', arr);
+      EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
+    },
+    selectOne: function(event) {
+      console.log(event.target)
     }
   }
 }

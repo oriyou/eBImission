@@ -1,8 +1,11 @@
 <template>
   <div class="cartListWrapper">
     <div class="cartHeader">
-      <div class="checkboxSet">
-        <input type="checkbox">
+      <div 
+        class="checkboxSet"
+        @click="selectGroup"
+      >
+        <input type="checkbox" :checked="this.checked">
         <label>{{this.trNo}}</label>
       </div>
     </div>
@@ -36,6 +39,7 @@ export default {
     return {
       trNo: this.group[0].trNo,
       groupPrice: 0,
+      checked: true,
     }
   },
   created: function() {
@@ -57,7 +61,12 @@ export default {
     },
     minusGroupPrice: function(price) {
       this.groupPrice -= price;
-    }
+    },
+    selectGroup: function(event) {
+      const isChecked = event.target.parentNode.querySelector('input[type=checkbox]').checked;
+      const inputArr = event.target.parentNode.parentNode.parentNode.querySelectorAll('input[type=checkbox]');
+      inputArr.forEach(item => item.checked = !isChecked);
+    },
   }
 }
 </script>
