@@ -85,7 +85,7 @@ public class CartServiceImpl implements CartService {
             return product;
         });
 
-         
+
     }
 
     @Override
@@ -130,10 +130,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Flux<Cart> removeCart(Flux<CartDto> cartArr) {
-        return cartArr.flatMap(item -> {
-            cartRepository.deleteCartByCartSn(item.getCartSn()).subscribe();
-            return Mono.just(item.toCart());
+    public Flux<Integer> removeCart(Flux<String> cartSnFlux) {
+        return cartSnFlux.flatMap(item -> {
+            System.out.println("***item***");
+            System.out.println(item);
+            return cartRepository.deleteCartByCartSn(item);
+
+//            return Mono.just(item);
         });
     }
 

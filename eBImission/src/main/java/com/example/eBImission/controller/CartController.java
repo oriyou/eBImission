@@ -33,8 +33,8 @@ public class CartController {
     }
 
     @PostMapping("/remove")
-    public Flux<Cart> deleteCart(@RequestBody Flux<CartDto> cartProducts) {
-        return cartService.removeCart(cartProducts);
+    public Flux<Integer> deleteCart(@RequestBody String[] cartSnFlux) {
+        return cartService.removeCart(Flux.just(cartSnFlux));
     }
 
 }

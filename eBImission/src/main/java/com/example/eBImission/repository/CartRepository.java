@@ -16,5 +16,5 @@ public interface CartRepository extends ReactiveCrudRepository<Cart, String> {
     @Query("UPDATE SET odQty = :odQty WHERE cartSn = :cartSn")
     Mono<Cart> updateCartOdQty(String cartSn, int odQty);
 
-    Mono<Cart> deleteCartByCartSn(String cartSn);
+    Mono<Integer> deleteCartByCartSn(String cartSn);
 }
