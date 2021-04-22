@@ -46,6 +46,7 @@
 <script>
 import {CartProductDto} from '~/model';
 import {EventBus} from '~/utils';
+import _ from 'loadsh';
 
 export default {
   name: 'CartProductComponent',
@@ -55,6 +56,7 @@ export default {
   data: function() {
     return {
       totalPrice: this.product.slPrc * this.product.odQty,
+      odQty: this.product.odQty,
     }
   },
   computed: {
@@ -62,13 +64,21 @@ export default {
       return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
     }
   },
+  watch: {
+    // odQty: function() {
+    //   _.debounce(function() {
+    //     this.minusOdQty();
+    //   }, 250)
+    // },
+  },
   methods: {
     plusOdQty: function() {
-      const price = this.product.slPrc*1;
-      this.product.odQty++;
-      this.totalPrice += price;
-      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
-      this.$emit('addGroupPrice', price); // 그룹가격 이벤트
+        const price = this.product.slPrc*1;
+        this.product.odQty++;
+        this.totalPrice += price;
+        EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
+        this.$emit('addGroupPrice', price); // 그룹가격 이벤트
+        this.debounceCart();  // debounce 호출
     },
     minusOdQty: function() {
       const price = this.product.slPrc*1;
@@ -77,10 +87,14 @@ export default {
         this.totalPrice -= price;
         EventBus.$emit('minusTotalValue', this.product);  // EventBus 이벤트 발행
         this.$emit('minusGroupPrice', price); // 그룹가격 이벤트
+        this.debounceCart();  // debounce 호출
       } else {
         alert('최소1개까지 구매 가능한 상품입니다.');
       }
     },
+    debounceCart: _.dgitebounce(function() {
+      EventBus.$emit('modifyCart', this.product);  // EventBus 이벤트 발행
+    }, 500),
     deleteCartProduct: function() {
       EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
     },
