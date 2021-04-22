@@ -90,6 +90,7 @@ export default {
     EventBus.$on('addTotalValue', this.addTotalValue);
     EventBus.$on('minusTotalValue', this.minusTotalValue);
     EventBus.$on('deleteCartProduct', this.deleteCartProduct);
+    EventBus.$on('modifyCart', this.modifyCart);
   },
   computed: {
     computedTotalPrice: function() {
@@ -144,12 +145,12 @@ export default {
     addTotalValue: function(product) {
       this.totalPrice += product.slPrc*1;
       this.totalOdQty++;
-      console.lo
-      CartApi.modify(product)
     },
     minusTotalValue: function(product) {
       this.totalPrice -= product.slPrc*1;
       this.totalOdQty--;
+    },
+    modifyCart: function(product) {
       CartApi.modify(product)
     },
     deleteCartProduct: function(productArr) {
