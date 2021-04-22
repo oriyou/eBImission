@@ -39,7 +39,7 @@ export default {
     return {
       trNo: this.group[0].trNo,
       groupPrice: 0,
-      checked: true,
+      checked: false,
     }
   },
   created: function() {

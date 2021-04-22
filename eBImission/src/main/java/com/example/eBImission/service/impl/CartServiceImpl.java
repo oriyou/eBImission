@@ -18,6 +18,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -32,20 +38,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public Flux<CartProductInfoDto> retrieveCart() {
 
-
-//        Flux<Cart> cart = cartRepository.findAll();
-//        ObjectMapper mapper = new ObjectMapper();
-        Flux<Cart> cart = cartRepository.findAllCartByRegDttm();
-
-//        cartRepository.findAllCartByRegDttm()
-//                .groupBy(prod -> prod.getTrNo())
-//                .subscribe(item -> {
-//                    item.subscribe(System.out::println);
-//                    System.out.println(item.key());
-//                    System.out.println(item.);
-//                });
-//        return null;
         /*
+        Flux<Cart> cart = cartRepository.findAll();
+        ObjectMapper mapper = new ObjectMapper();
+
         WebClient webClient = WebClient.create();
         Flux<CartProductDto> productInfo = webClient.post()
                         .uri(END_POINT_URI)
@@ -59,8 +55,7 @@ public class CartServiceImpl implements CartService {
                         .map(e -> new Gson().fromJson(String.valueOf(e), CartProductDto.class));
         */
 
-
-
+        Flux<Cart> cart = cartRepository.findAllCartOrderByRegDttm();
         // Webclient의 기존 설정값을 상속해서 사용할 수 있는 mutate() 함수를 통해 build()
         Flux<CartProductInfoDto> productInfo = webClient.mutate()
                         .build()
@@ -84,8 +79,34 @@ public class CartServiceImpl implements CartService {
 
             return product;
         });
+    }
 
+    @Override
+    public Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCart2() {
 
+        Flux<Cart> cart = cartRepository.findAllCartOrderByRegDttm();
+        // Webclient의 기존 설정값을 상속해서 사용할 수 있는 mutate() 함수를 통해 build()
+        return webClient.mutate()
+                .build()
+                .post()
+                .uri(END_POINT_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(cart, Cart.class))
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .map(e -> e.path("data"))
+                .flatMapMany(Flux::fromIterable)
+                .map(e -> mapper.convertValue(e, CartProductInfoDto.class))
+                .zipWith(cart, (product, cartProduct) -> {
+                    product.setCartSn(cartProduct.getCartSn());
+                    product.setOdQty(cartProduct.getOdQty());
+                    product.setMbNo(cartProduct.getMbNo());
+                    product.setRegDttm(cartProduct.getRegDttm());
+
+                    return product;
+                })
+                .collectMultimap(cartProductInfoDto -> cartProductInfoDto.getLrtrNo());
     }
 
     @Override
@@ -107,9 +128,7 @@ public class CartServiceImpl implements CartService {
                         throw new RuntimeException("500 Error");
                     return e.getData();
                 })
-                // Mono<CartDto[]> -> Flux<CartDto>2
                 .flatMapMany(cartDtoArr -> Flux.just(cartDtoArr))
-                // Flux<CartDto> -> Mono<CartDto>
                 .next()
                 // returnCode가 200이고 lrtrNo가 null이 아닌지 체크
                 .filter(cart -> cart.getReturnCode().equals("200") && cart.getLrtrNo() != null)

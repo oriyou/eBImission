@@ -11,7 +11,9 @@ import java.awt.print.Pageable;
 public interface CartRepository extends ReactiveCrudRepository<Cart, String> {
 
     @Query("SELECT * FROM om_cart ORDER BY REG_DTTM DESC")
-    Flux<Cart> findAllCartByRegDttm();
+    Flux<Cart> findAllCartOrderByRegDttm();
+
+    Flux<Cart> findCartBylrtrNo(String lrtrNo);
 
     @Query("UPDATE SET odQty = :odQty WHERE cartSn = :cartSn")
     Mono<Cart> updateCartOdQty(String cartSn, int odQty);

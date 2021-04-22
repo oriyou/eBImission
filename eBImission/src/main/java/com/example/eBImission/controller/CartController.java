@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
@@ -23,7 +28,6 @@ public class CartController {
 
     @PostMapping
     public Mono<Cart> registerCartProduct(@RequestBody CartDto cartDto) {
-
         return cartService.registerCart(cartDto);
     }
 
@@ -35,6 +39,11 @@ public class CartController {
     @PostMapping("/remove")
     public Flux<Integer> deleteCart(@RequestBody String[] cartSnArr) {
         return cartService.removeCart(Flux.just(cartSnArr));
+    }
+
+    @GetMapping("/get2")
+    public Mono<Map<String, Collection<CartProductInfoDto>>> getCartProducts2() {
+        return cartService.retrieveCart2();
     }
 
 }

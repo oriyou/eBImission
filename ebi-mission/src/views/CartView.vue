@@ -139,7 +139,7 @@ export default {
       this.originCartArr.forEach(item => {
         this.totalPrice += item.slPrc*item.odQty;
         this.totalOdQty += item.odQty*1;
-      });
+      });                   
     },
     addTotalValue: function(product) {
       this.totalPrice += product.slPrc*1;
@@ -165,8 +165,10 @@ export default {
           input.checked ? cartSnArr.push(input.value) : '';
         });
       });
-      CartApi.remove(cartSnArr);
-      this.$router.go();
+      if(cartSnArr.length > 0) {
+        CartApi.remove(cartSnArr);
+        this.$router.go();
+      }
     }
   },
   beforeDestroy: function() {
