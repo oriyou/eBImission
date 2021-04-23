@@ -15,6 +15,7 @@ public interface CartService {
 
     Flux<CartProductInfoDto> retrieveCart();
     Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCart2();
+    Flux<Object> retrieveCart3();
     Mono<Cart> registerCart(CartDto cartDto);
     Mono<Cart> modifyCart(Cart cart);
     Flux<Integer> removeCart(Flux<String> cartSnFlux);

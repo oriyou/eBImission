@@ -31,7 +31,14 @@
     </div>
     <div class="cartPrice">
       <p>
-        <strong v-if="this.totalPrice">{{this.totalPrice}}</strong>
+        <span :id="product.cartSn" style="display: none;">
+          <v-progress-circular
+            class="spinner"
+            indeterminate
+            color="primary"
+          />
+        </span>
+        <strong v-if="this.totalPrice">{{this.computedTotalPrice}}</strong>
         원
       </p>
     </div>
@@ -55,36 +62,45 @@ export default {
   },
   data: function() {
     return {
-      totalPrice: this.product.slPrc * this.product.odQty,
-      odQty: this.product.odQty,
+      totalPrice: 0,
+      spinner : '',
     }
+  },
+  created: function() {
+    this.totalPrice = this.product.slPrc * this.product.odQty;
+  },
+  mounted: function() {
+    // this.spinner = document.querySelector(`'span#${this.product.cartSn}'`);
   },
   computed: {
     img : function() {
       return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
-    }
-  },
-  watch: {
-    // odQty: function() {
-    //   _.debounce(function() {
-    //     this.minusOdQty();
-    //   }, 250)
-    // },
+    },
+    computedTotalPrice: function() {
+      return this.totalPrice.toLocaleString('ko-KR');
+    },
   },
   methods: {
-    plusOdQty: function() {
-        const price = this.product.slPrc*1;
-        this.product.odQty++;
-        this.totalPrice += price;
-        EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
-        this.$emit('addGroupPrice', price); // 그룹가격 이벤트
-        this.debounceCart();  // debounce 호출
+    plusOdQty: function(event) {
+      // spinner 가져오기
+      this.spinner = event.target.parentNode.parentNode.querySelector('span');
+      this.spinner.style.display="inline";
+      
+      const price = this.product.slPrc*1; // 제품 한개 가격
+      this.product.odQty++; // 수량 ++
+      this.totalPrice += price; // 단품 총 가격에 더하기
+      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
+      this.$emit('addGroupPrice', price); // 그룹가격 이벤트
+      this.debounceCart();  // debounce 호출
     },
-    minusOdQty: function() {
-      const price = this.product.slPrc*1;
+    minusOdQty: function(event) {
+      this.spinner = event.target.parentNode.parentNode.querySelector('span');
+      this.spinner.style.display="inline"; // spinner 보이기
+      
+      const price = this.product.slPrc*1; // 제품 한개 가격
       if(this.product.odQty > 1) {
-        this.product.odQty--;
-        this.totalPrice -= price;
+        this.product.odQty--; // 수량 --
+        this.totalPrice -= price; // 단품 총 가격에서 빼기
         EventBus.$emit('minusTotalValue', this.product);  // EventBus 이벤트 발행
         this.$emit('minusGroupPrice', price); // 그룹가격 이벤트
         this.debounceCart();  // debounce 호출
@@ -92,8 +108,8 @@ export default {
         alert('최소1개까지 구매 가능한 상품입니다.');
       }
     },
-    debounceCart: _.dgitebounce(function() {
-      EventBus.$emit('modifyCart', this.product);  // EventBus 이벤트 발행
+    debounceCart: _.debounce(function() {
+      EventBus.$emit('modifyCart', this.product, this.spinner);  // EventBus 이벤트 발행
     }, 500),
     deleteCartProduct: function() {
       EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
@@ -207,5 +223,10 @@ export default {
     background-position: 50%;
     background-size: 100% 100%;
     background-image: url(//static.lotteon.com/p/order/assets/img/icon_delete-item_new.svg);
+  }
+  .spinner {
+    height: 13px !important;
+    width: 15px !important;
+    color: gray;
   }
 </style>

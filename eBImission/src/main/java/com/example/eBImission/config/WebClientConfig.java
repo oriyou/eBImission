@@ -1,5 +1,6 @@
 package com.example.eBImission.config;
 
+import com.example.eBImission.handler.HttpLoggingHandler;
 import com.example.eBImission.utils.ThrowingConsumer;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -28,7 +29,8 @@ public class WebClientConfig {
         // in-memmory buffer 값은 default로 256KB이다. 256KB보다 큰 HTTP 메시지를 처리하기 위해
         // ExchangeStrategies.builder() 를 통해 값을 늘러줘야 한다.
         ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
-                                            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024*1024*50))
+                                            .codecs(configurer -> configurer.defaultCodecs()
+                                                        .maxInMemorySize(1024*1024*50))
                                             .build();
         // Logging
         exchangeStrategies
@@ -49,7 +51,8 @@ public class WebClientConfig {
                                     .secure(
                                             ThrowingConsumer.unchecked(
                                                     sslContextSpec -> sslContextSpec.sslContext(
-                                                                SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build()
+                                                                SslContextBuilder.forClient().
+                                                                        trustManager(InsecureTrustManagerFactory.INSTANCE).build()
                                                             )
                                                     )
                                             )
@@ -58,13 +61,11 @@ public class WebClientConfig {
                                     .doOnConnected(conn -> conn.addHandler(new ReadTimeoutHandler(180))
                                                 .addHandler(new WriteTimeoutHandler(180))
                                     )
-//
-//                                    .tcpConfiguration(
-//                                                client -> client.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 120_000)
-//                                            .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(180))
-//                                                                        .addHandlerLast(new WriteTimeoutHandler(180))
-//                                            )
-//                                    )
+
+                                    // loggingHandler
+//                                    .doOnRequest((request, connection) -> {
+//                                        connection.addHandler(new HttpLoggingHandler());
+//                                    })
                         )
                 )
                 .exchangeStrategies(exchangeStrategies)
@@ -74,13 +75,6 @@ public class WebClientConfig {
                 // ExchangeFilterFunction.ofRequestProcessor() 와 ExchangeFilterFunction.ofRequestProcessor() 를 통해
                 // clientRequest와 clientResponse를 변경하거나 출력할 수 있다.
                 // Request / Response header 를 출력하는 설정
-                .filter(ExchangeFilterFunction.ofRequestProcessor(
-                        clientRequest -> {
-                            log.debug("Request: {} {}", clientRequest.method(), clientRequest.url());
-                            clientRequest.headers().forEach((name, values) -> values.forEach(value -> log.debug("{} : {}", name, value)));
-                            return Mono.just(clientRequest);
-                        }
-                ))
                 .filter(ExchangeFilterFunction.ofRequestProcessor(
                         clientRequest -> {
                             log.debug("Request: {} {}", clientRequest.method(), clientRequest.url());

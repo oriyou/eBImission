@@ -1,5 +1,6 @@
 package com.example.eBImission.entity;
 
+import com.example.eBImission.entity.dto.CartProductInfoDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,5 +50,23 @@ public class Cart {
     @Column("mod_dttm")
     @LastModifiedDate
     private LocalDateTime modDttm;  // 수정날짜
+
+    public Cart(String lrtrNo, String spdNo, String sitmNo) {
+        this.lrtrNo = lrtrNo;
+        this.spdNo = spdNo;
+        this.sitmNo = sitmNo;
+    }
+
+    public CartProductInfoDto toDto() {
+        CartProductInfoDto dto = new CartProductInfoDto();
+        dto.setCartSn(this.cartSn);
+        dto.setSpdNo(this.spdNo);
+        dto.setSitmNo(this.sitmNo);
+        dto.setMbNo(this.mbNo);
+        dto.setOdQty(this.odQty);
+        dto.setRegDttm(this.regDttm);
+
+        return dto;
+    }
 
 }

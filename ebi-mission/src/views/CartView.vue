@@ -72,7 +72,7 @@ import {CartApi} from '~/api';
 import {CartGroupComponent} from '~/components';
 import {EventBus} from '~/utils';
 
-export default {
+export default {  
   components: { CartGroupComponent },
   name: 'CartView',
   data: function() {
@@ -99,19 +99,20 @@ export default {
   },
   methods: {
     retrieveCart: async function() {
-      let groupingCart = {};
+      
       await CartApi.retrieveCart()
         .then(cart => {
           this.originCartArr = cart;
         });
 
+      let groupingCart = {};
       this.originCartArr.forEach(e => {    
         if(!Object.keys(groupingCart).includes(e.trNo)) {
           groupingCart[e.trNo] = [];
         }
         groupingCart[e.trNo].push(e);
       });
-
+      
       /*
       groupingCartArr =
                 {
@@ -150,8 +151,10 @@ export default {
       this.totalPrice -= product.slPrc*1;
       this.totalOdQty--;
     },
-    modifyCart: function(product) {
-      CartApi.modify(product)
+    modifyCart: function(product, spinner) {
+      CartApi.modify(product).then(result => {
+        result.status == "200" ? spinner.style.display="none" : '';
+      })
     },
     deleteCartProduct: function(productArr) {
       CartApi.remove(productArr);

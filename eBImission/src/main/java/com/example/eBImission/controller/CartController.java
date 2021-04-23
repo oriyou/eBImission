@@ -46,4 +46,9 @@ public class CartController {
         return cartService.retrieveCart2();
     }
 
+    @GetMapping("/get3")
+    public Flux<Object> getCartProducts3() {
+        return cartService.retrieveCart3();
+    }
+
 }
