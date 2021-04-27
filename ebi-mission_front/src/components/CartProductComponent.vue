@@ -2,7 +2,6 @@
   <li v-if="product">
     <div class="cartProduct">
       <input type="checkbox" 
-        @click="selectOne"
         :value="product.cartSn"
       >
       <div class="productItem">
@@ -38,7 +37,7 @@
             color="primary"
           />
         </span>
-        <strong v-if="this.totalPrice">{{this.computedTotalPrice}}</strong>
+        <strong v-if="this.totalPrice">{{setComma(this.totalPrice)}}</strong>
         원
       </p>
     </div>
@@ -52,7 +51,7 @@
 
 <script>
 import {CartProductDto} from '~/model';
-import {EventBus} from '~/utils';
+import {EventBus, priceMixin} from '~/utils';
 import _ from 'loadsh';
 
 export default {
@@ -69,22 +68,15 @@ export default {
   created: function() {
     this.totalPrice = this.product.slPrc * this.product.odQty;
   },
-  mounted: function() {
-    // this.spinner = document.querySelector(`'span#${this.product.cartSn}'`);
-  },
+  mixins: [priceMixin],
   computed: {
     img : function() {
       return this.product.imgJsn.length > 0 ? this.product.imgJsn[0].origImgFileNm : require('~/assets/default_image.png');
     },
-    computedTotalPrice: function() {
-      return this.totalPrice.toLocaleString('ko-KR');
-    },
   },
   methods: {
     plusOdQty: function(event) {
-      // spinner 가져오기
-      this.spinner = event.target.parentNode.parentNode.querySelector('span');
-      this.spinner.style.display="inline";
+      this.showSpinner(event);
       
       const price = this.product.slPrc*1; // 제품 한개 가격
       this.product.odQty++; // 수량 ++
@@ -94,8 +86,7 @@ export default {
       this.debounceCart();  // debounce 호출
     },
     minusOdQty: function(event) {
-      this.spinner = event.target.parentNode.parentNode.querySelector('span');
-      this.spinner.style.display="inline"; // spinner 보이기
+      this.showSpinner(event); // spinner 보이기
       
       const price = this.product.slPrc*1; // 제품 한개 가격
       if(this.product.odQty > 1) {
@@ -114,8 +105,9 @@ export default {
     deleteCartProduct: function() {
       EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
     },
-    selectOne: function(event) {
-      console.log(event.target)
+    showSpinner: function(event) {
+      this.spinner = event.target.parentNode.parentNode.querySelector('span');
+      this.spinner.style.display="inline";
     }
   }
 }

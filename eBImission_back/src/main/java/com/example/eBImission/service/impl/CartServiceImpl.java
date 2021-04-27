@@ -46,7 +46,8 @@ public class CartServiceImpl implements CartService {
 
         Mono<CartProductInfoDto[]> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
                 .bodyToMono(ProductInfoResponse.class)
-                .map(response -> response.getData()).cache();
+                .map(response -> response.getData())
+                .cache();
 
         return cartProducts
                 .concatMap(prod -> Flux.just(prod.toDto()))
@@ -61,23 +62,37 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public Flux<CartProductInfoDto> retrieveCartAfterGrouping() {
+        return cartRepository.findAllCartOrderByRegDttm()
+                .groupBy(cart ->
+                        new CartGroupDto(cart.getSpdNo(), cart.getSitmNo(), cart.getTrNo()))
+                .concatMap(group -> {
+                    log.info("Group key: {}", group.key());
+                    return webClientUtil.postRequest(END_POINT_URI, Flux.just(group.key()), CartGroupDto.class)
+                            .bodyToFlux(ProductInfoResponse.class)
+                            .flatMap(resp -> Flux.just(resp.getData()[0]))
+                            .flatMap(apiData -> {
+                                log.info("Response Data: {}", apiData);
+                                return group.map(orgData -> orgData.toDto())
+                                        .concatMap(orgData -> {
+                                            log.info("orgData: {}", orgData);
+                                            return addValue(orgData, apiData);
+                                        });
+                            });
+                });
+    }
+
+    @Override
     public Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCartByMap() {
 
-        Flux<Cart> cart = cartRepository.findAllCartOrderByRegDttm();
+        Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
         // Webclient의 기존 설정값을 상속해서 사용할 수 있는 mutate() 함수를 통해 build()
-        return webClient.mutate()
-                .build()
-                .post()
-                .uri(END_POINT_URI)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(cart, Cart.class)
-                .retrieve()
+        return webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
                 .bodyToMono(JsonNode.class)
                 .map(e -> e.path("data"))
                 .flatMapMany(Flux::fromIterable)
                 .map(e -> mapper.convertValue(e, CartProductInfoDto.class))
-                .zipWith(cart, (product, cartProduct) -> {
+                .zipWith(cartProducts, (product, cartProduct) -> {
                     product.setCartSn(cartProduct.getCartSn());
                     product.setOdQty(cartProduct.getOdQty());
                     product.setMbNo(cartProduct.getMbNo());
@@ -86,28 +101,6 @@ public class CartServiceImpl implements CartService {
                     return product;
                 })
                 .collectMultimap(cartProductInfoDto -> cartProductInfoDto.getLrtrNo());
-    }
-
-    @Override
-    public Flux<CartProductInfoDto> retrieveCartAfterGrouping() {
-        return cartRepository.findAllCartOrderByRegDttm()
-                // n개의 Flux 생성 (spdNo와 sitmNo로 그룹핑)
-                .groupBy(cart ->
-                        new CartGroupDto(cart.getSpdNo(), cart.getSitmNo(), cart.getTrNo()))
-                .concatMap(group -> {
-                            log.info("Group key: {}", group.key());
-                            return webClientUtil.postRequest(END_POINT_URI, Flux.just(group.key()), CartGroupDto.class)
-                                    .bodyToFlux(ProductInfoResponse.class)
-                                    .map(resp -> resp.getData()[0])
-                                    .flatMap(apiData -> {
-                                        log.info("Response Data: {}", apiData);
-                                        return group.map(orgData -> orgData.toDto())
-                                        .concatMap(orgData -> {
-                                            log.info("orgData: {}", orgData);
-                                            return addValue(orgData, apiData);
-                                        });
-                                    });
-                        });
     }
 
     private Flux<CartProductInfoDto> addValue(CartProductInfoDto orgData, CartProductInfoDto apiData) {

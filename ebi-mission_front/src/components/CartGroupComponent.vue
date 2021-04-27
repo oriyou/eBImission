@@ -19,13 +19,14 @@
       />
     </ul>
     <div class="cartFooter">
-      <p class="groupPrice"><strong>{{this.computedGroupPrice}}</strong>원</p>
+      <p class="groupTotalPrice"><strong>{{setComma(this.groupTotalPrice)}}</strong>원</p>
     </div>
   </div>
 </template>
 
 <script>
 import CartProductComponent from './CartProductComponent';
+import {priceMixin} from '~/utils';
 
 export default {
   name: 'CartGroupComponent',
@@ -38,29 +39,30 @@ export default {
   data : function() {
     return {
       trNo: this.group[0].trNo,
-      groupPrice: 0,
+      groupTotalPrice: 0,
       checked: false,
     }
   },
   created: function() {
     this.calculateGroupPrice();
   },
-  computed: {
-    computedGroupPrice: function() {
-      return this.groupPrice.toLocaleString('ko-KR');
-    }
-  },
+  mixins: [priceMixin],
+  // computed: {
+  //   computedGroupPrice: function() {
+  //     return this.groupTotalPrice.toLocaleString('ko-KR');
+  //   }
+  // },
   methods: {
     calculateGroupPrice: function() {
       this.group.forEach(item => {
-        this.groupPrice += item.slPrc*item.odQty;
+        this.groupTotalPrice += item.slPrc*item.odQty;
       })
     },
     addGroupPrice: function(price) {
-      this.groupPrice += price;
+      this.groupTotalPrice += price;
     },
     minusGroupPrice: function(price) {
-      this.groupPrice -= price;
+      this.groupTotalPrice -= price;
     },
     selectGroup: function(event) {
       const isChecked = event.target.parentNode.querySelector('input[type=checkbox]').checked;

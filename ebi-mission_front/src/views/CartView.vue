@@ -41,7 +41,7 @@
             <div class="priceList">
               <dl>
                 <dt> 상품금액 </dt>
-                <dd> {{this.computedTotalPrice}}원 </dd>
+                <dd> {{setComma(this.totalPrice)}}원 </dd>
               </dl>
               <dl>
                 <dt> 배송비 </dt>
@@ -55,7 +55,7 @@
             <dl class="totalPrice">
               <dt>총 {{this.totalOdQty}}건</dt>
               <dt class="price">
-                <strong>{{this.computedTotalPrice}}</strong>
+                <strong>{{setComma(this.totalPrice)}}</strong>
                 <span>원</span>
               </dt>
             </dl>
@@ -70,7 +70,7 @@
 <script>
 import {CartApi} from '~/api';
 import {CartGroupComponent} from '~/components';
-import {EventBus} from '~/utils';
+import {EventBus, priceMixin} from '~/utils';
 
 export default {  
   components: { CartGroupComponent },
@@ -92,11 +92,7 @@ export default {
     EventBus.$on('deleteCartProduct', this.deleteCartProduct);
     EventBus.$on('modifyCart', this.modifyCart);
   },
-  computed: {
-    computedTotalPrice: function() {
-      return this.totalPrice.toLocaleString('ko-KR');
-    }
-  },
+  mixins: [priceMixin],
   methods: {
     retrieveCart: async function() {
       

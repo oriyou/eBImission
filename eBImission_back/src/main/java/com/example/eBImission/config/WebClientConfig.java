@@ -62,7 +62,7 @@ public class WebClientConfig {
                                                                 .addHandler(new WriteTimeoutHandler(180))
                                     )
 
-                                    // loggingHandler
+                                     // HttpLoggingHandler
 //                                    .doOnRequest((request, connection) -> {
 //                                        connection.addHandler(new HttpLoggingHandler());
 //                                    })

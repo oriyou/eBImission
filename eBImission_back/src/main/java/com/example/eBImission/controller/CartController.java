@@ -41,13 +41,13 @@ public class CartController {
         return cartService.removeCart(Flux.just(cartSnArr));
     }
 
-    @GetMapping("/get2")
-    public Mono<Map<String, Collection<CartProductInfoDto>>> getCartProducts2() {
+    @GetMapping("/map")
+    public Mono<Map<String, Collection<CartProductInfoDto>>> getCartProductsByMap() {
         return cartService.retrieveCartByMap();
     }
 
-    @GetMapping("/get3")
-    public Flux<CartProductInfoDto> getCartProducts3() {
+    @GetMapping("/grouping")
+    public Flux<CartProductInfoDto> getCartProductsAfterGrouping() {
         return cartService.retrieveCartAfterGrouping();
     }
 
