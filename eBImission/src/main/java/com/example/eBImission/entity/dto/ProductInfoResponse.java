@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class ProductInfoResponse {
 
     private String returnCode;
-    private CartDto[] data;
+    private CartProductInfoDto[] data;
 
 }

@@ -29,9 +29,9 @@ public class WebClientConfig {
         // in-memmory buffer 값은 default로 256KB이다. 256KB보다 큰 HTTP 메시지를 처리하기 위해
         // ExchangeStrategies.builder() 를 통해 값을 늘러줘야 한다.
         ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
-                                            .codecs(configurer -> configurer.defaultCodecs()
+                                                .codecs(configurer -> configurer.defaultCodecs()
                                                         .maxInMemorySize(1024*1024*50))
-                                            .build();
+                                                .build();
         // Logging
         exchangeStrategies
                 .messageWriters().stream()
@@ -59,7 +59,7 @@ public class WebClientConfig {
                                     // TCP 연결시 ConnectionTimeOut, ReadTimeOut, WriteTimeOut을 적용하는 설정을 추가하였다.
                                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 8000)
                                     .doOnConnected(conn -> conn.addHandler(new ReadTimeoutHandler(180))
-                                                .addHandler(new WriteTimeoutHandler(180))
+                                                                .addHandler(new WriteTimeoutHandler(180))
                                     )
 
                                     // loggingHandler

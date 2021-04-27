@@ -31,5 +31,4 @@ public class WebClientUtil {
                 .body(publisher, bodyType)
                 .retrieve();
     }
-
 }

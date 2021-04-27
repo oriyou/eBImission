@@ -62,6 +62,7 @@ public class Cart {
         dto.setCartSn(this.cartSn);
         dto.setSpdNo(this.spdNo);
         dto.setSitmNo(this.sitmNo);
+        dto.setTrNo(this.trNo);
         dto.setMbNo(this.mbNo);
         dto.setOdQty(this.odQty);
         dto.setRegDttm(this.regDttm);

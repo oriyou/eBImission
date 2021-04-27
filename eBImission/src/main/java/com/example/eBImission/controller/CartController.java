@@ -43,12 +43,12 @@ public class CartController {
 
     @GetMapping("/get2")
     public Mono<Map<String, Collection<CartProductInfoDto>>> getCartProducts2() {
-        return cartService.retrieveCart2();
+        return cartService.retrieveCartByMap();
     }
 
     @GetMapping("/get3")
-    public Flux<Object> getCartProducts3() {
-        return cartService.retrieveCart3();
+    public Flux<CartProductInfoDto> getCartProducts3() {
+        return cartService.retrieveCartAfterGrouping();
     }
 
 }

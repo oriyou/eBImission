@@ -2,6 +2,7 @@ package com.example.eBImission.service.impl;
 
 import com.example.eBImission.entity.Cart;
 import com.example.eBImission.entity.dto.CartDto;
+import com.example.eBImission.entity.dto.CartGroupDto;
 import com.example.eBImission.entity.dto.CartProductInfoDto;
 import com.example.eBImission.entity.dto.ProductInfoResponse;
 import com.example.eBImission.service.CartService;
@@ -43,26 +44,24 @@ public class CartServiceImpl implements CartService {
 
         Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
 
-        Flux<CartProductInfoDto> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
-                .bodyToMono(JsonNode.class)
-                .flatMapMany(response -> Flux.fromIterable(response.path("data")))
-                .map(jsonNode -> mapper.convertValue(jsonNode, CartProductInfoDto.class));
+        Mono<CartProductInfoDto[]> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
+                .bodyToMono(ProductInfoResponse.class)
+                .map(response -> response.getData()).cache();
 
-
-        // cartSn, odQty, mbNo 추가
-        return productsInfo.zipWith(cartProducts, (product, cartProduct) -> {
-            product.setCartSn(cartProduct.getCartSn());
-            product.setOdQty(cartProduct.getOdQty());
-            product.setMbNo(cartProduct.getMbNo());
-            product.setRegDttm(cartProduct.getRegDttm());
-            return product;
-        });
-
-
+        return cartProducts
+                .concatMap(prod -> Flux.just(prod.toDto()))
+                .concatMap(prod -> productsInfo.map(infoDtoArr -> {
+                    for(CartProductInfoDto dto : infoDtoArr) {
+                        if (dto.isEqual(prod)) {
+                            addValue(prod, dto);
+                        }
+                    }
+                    return prod;
+                }));
     }
 
     @Override
-    public Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCart2() {
+    public Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCartByMap() {
 
         Flux<Cart> cart = cartRepository.findAllCartOrderByRegDttm();
         // Webclient의 기존 설정값을 상속해서 사용할 수 있는 mutate() 함수를 통해 build()
@@ -90,31 +89,36 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Flux<Object> retrieveCart3() {
-//        Flux<GroupedFlux<Cart, Object>> group = cartRepository.findAllCartOrderByRegDttm().groupBy(cartProd -> new Cart(cartProd.getLrtrNo(), cartProd.getSpdNo(), cartProd.getSitmNo());
-        Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
-
-        Flux<CartProductInfoDto> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
-                .bodyToMono(JsonNode.class)
-                .flatMapMany(response -> Flux.fromIterable(response.path("data")))
-                .map(jsonNode -> mapper.convertValue(jsonNode, CartProductInfoDto.class));
-
-        return cartProducts.concatMap(cartProduct ->
-            Flux.just(productsInfo.map(dto -> {
-                if(cartProduct.getSpdNo().equals(dto.getSpdNo())){
-                    return addValue(cartProduct, dto);
-                } else {
-                    return dto;
-                }
-            })
-        );
+    public Flux<CartProductInfoDto> retrieveCartAfterGrouping() {
+        return cartRepository.findAllCartOrderByRegDttm()
+                // n개의 Flux 생성 (spdNo와 sitmNo로 그룹핑)
+                .groupBy(cart ->
+                        new CartGroupDto(cart.getSpdNo(), cart.getSitmNo(), cart.getTrNo()))
+                .concatMap(group -> {
+                            log.info("Group key: {}", group.key());
+                            return webClientUtil.postRequest(END_POINT_URI, Flux.just(group.key()), CartGroupDto.class)
+                                    .bodyToFlux(ProductInfoResponse.class)
+                                    .map(resp -> resp.getData()[0])
+                                    .flatMap(apiData -> {
+                                        log.info("Response Data: {}", apiData);
+                                        return group.map(orgData -> orgData.toDto())
+                                        .concatMap(orgData -> {
+                                            log.info("orgData: {}", orgData);
+                                            return addValue(orgData, apiData);
+                                        });
+                                    });
+                        });
     }
 
-    private Flux<CartProductInfoDto> addValue(Cart cart, CartProductInfoDto dto) {
-        CartProductInfoDto cartDto = cart.toDto();
-        cartDto.setTrNo(dto.getTrNo());
-        cartDto.setLrtrNo(dto.getLrtrNo());
-        return Flux.just(cartDto);
+    private Flux<CartProductInfoDto> addValue(CartProductInfoDto orgData, CartProductInfoDto apiData) {
+        orgData.setTrNo(apiData.getTrNo());
+        orgData.setLrtrNo(apiData.getLrtrNo());
+        orgData.setSpdNm(apiData.getSpdNm());
+        orgData.setBrdNm(apiData.getBrdNm());
+        orgData.setSlPrc(apiData.getSlPrc());
+        orgData.setEstmtDlvTxt(apiData.getEstmtDlvTxt());
+        orgData.setImgJsn(apiData.getImgJsn());
+        return Flux.just(orgData);
     }
 
     @Override
@@ -127,20 +131,17 @@ public class CartServiceImpl implements CartService {
                     // 500에러 일때 RuntimeException
                     if(e.getReturnCode().equals("500"))
                         throw new RuntimeException("500 Error");
-                    return e.getData();
+                    return e.getData()[0];
                 })
-                .flatMapMany(cartDtoArr -> Flux.just(cartDtoArr))
-                .next()
                 // returnCode가 200이고 lrtrNo가 null이 아닌지 체크
                 .filter(cart -> cart.getReturnCode().equals("200") && cart.getLrtrNo() != null)
-                .map(cartDto -> {
-                    cartDto.setMbNo(cartDtoRequest.getMbNo());
-                    cartDto.setOdQty(cartDtoRequest.getOdQty());
+                .map(dto -> mapper.convertValue(dto, Cart.class))
+                .flatMap(cart -> {
+                    cart.setMbNo(cartDtoRequest.getMbNo());
+                    cart.setOdQty(cartDtoRequest.getOdQty());
 
-                    Cart cart = cartDto.toCart();
-                    cartRepository.save(cart).subscribe();
+                    return cartRepository.save(cart);
 
-                    return cart;
                 });
     }
 

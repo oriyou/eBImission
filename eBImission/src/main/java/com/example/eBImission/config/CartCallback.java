@@ -24,7 +24,7 @@ public class CartCallback implements BeforeConvertCallback<Cart> {
         System.out.println("*************************beforeConvert**************************");
         System.out.println(cart);
 
-        if(cart.getCartSn() == null)
+        if(cart.getCartSn() == null || cart.getCartSn().equals(""))
             return Mono.just(setCartSnAndGet(cart));
         return Mono.just(cart);
     }
