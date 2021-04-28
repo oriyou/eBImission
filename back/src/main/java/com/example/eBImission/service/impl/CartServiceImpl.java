@@ -44,7 +44,7 @@ public class CartServiceImpl implements CartService {
 
         Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
 
-        Mono<CartProductInfoDto[]> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
+        Mono<CartProductInfoDto[]> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts.distinct(), Cart.class)
                 .bodyToMono(ProductInfoResponse.class)
                 .map(response -> response.getData())
                 .cache();
@@ -86,6 +86,7 @@ public class CartServiceImpl implements CartService {
     public Mono<Map<String, Collection<CartProductInfoDto>>> retrieveCartByMap() {
 
         Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
+
         // Webclient의 기존 설정값을 상속해서 사용할 수 있는 mutate() 함수를 통해 build()
         return webClientUtil.postRequest(END_POINT_URI, cartProducts, Cart.class)
                 .bodyToMono(JsonNode.class)

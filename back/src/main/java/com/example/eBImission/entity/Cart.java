@@ -2,10 +2,7 @@ package com.example.eBImission.entity;
 
 import com.example.eBImission.entity.dto.CartProductInfoDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
+import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -26,6 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("om_cart")
+@EqualsAndHashCode(exclude = {"cartSn", "regDttm", "modDttm", "odQty"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Cart {
 
@@ -51,12 +49,6 @@ public class Cart {
     @LastModifiedDate
     private LocalDateTime modDttm;  // 수정날짜
 
-    public Cart(String lrtrNo, String spdNo, String sitmNo) {
-        this.lrtrNo = lrtrNo;
-        this.spdNo = spdNo;
-        this.sitmNo = sitmNo;
-    }
-
     public CartProductInfoDto toDto() {
         CartProductInfoDto dto = new CartProductInfoDto();
         dto.setCartSn(this.cartSn);
@@ -69,5 +61,4 @@ public class Cart {
 
         return dto;
     }
-
 }
