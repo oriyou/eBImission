@@ -134,7 +134,6 @@ public class CartServiceImpl implements CartService {
                     cart.setOdQty(cartDtoRequest.getOdQty());
 
                     return cartRepository.save(cart);
-
                 });
     }
 
