@@ -77,15 +77,15 @@ export default {
   name: 'CartView',
   data: function() {
     return {
-      originCartArr: [],
-      groupingCartArr: [],
-      totalPrice: 0,
-      totalOdQty: 0,
+      originCartArr: Array,
+      groupingCartArr: Array,
+      totalPrice: Number,
+      totalOdQty: Number,
     }
   },
   created: async function() {
     await this.retrieveCart();
-    this.initTotalPriceAndOdQty();
+    
     // EventBus 이벤트 구독
     EventBus.$on('addTotalValue', this.addTotalValue);
     EventBus.$on('minusTotalValue', this.minusTotalValue);
@@ -95,6 +95,7 @@ export default {
   mixins: [priceMixin],
   methods: {
     retrieveCart: async function() {
+      this.groupingCartArr = [];
       
       await CartApi.retrieveCart()
         .then(cart => {
@@ -124,16 +125,20 @@ export default {
       Object.keys(groupingCart).forEach(key => {
         this.groupingCartArr.push(groupingCart[key])
       });
+
+      this.initTotalPriceAndOdQty();
     },
     selectAll: function(event) {
-      const isChecked = event.target.parentNode.querySelector('input[type=checkbox').checked;
-      event.target.parentNode.querySelector('input[type=checkbox').checked = !isChecked;
+      const isChecked = event.target.parentNode.querySelector('input[type=checkbox]').checked;
+      event.target.parentNode.querySelector('input[type=checkbox]').checked = !isChecked;
       const inputArr = event.target.parentNode.parentNode.parentNode.querySelectorAll('input[type=checkbox]');
       inputArr.forEach(element => {
         element.checked = !isChecked;
       });
     },
     initTotalPriceAndOdQty: function() {
+      this.totalPrice = 0;
+      this.totalOdQty = 0;
       this.originCartArr.forEach(item => {
         this.totalPrice += item.slPrc*item.odQty;
         this.totalOdQty += item.odQty*1;
@@ -152,9 +157,9 @@ export default {
         result.status == "200" ? spinner.style.display="none" : '';
       })
     },
-    deleteCartProduct: function(productArr) {
-      CartApi.remove(productArr);
-      this.$router.go();
+    deleteCartProduct: async function(productArr) {
+      await CartApi.remove(productArr);
+      this.retrieveCart();
     },
     deleteSelected: function() {
       let cartSnArr = [];
@@ -165,9 +170,11 @@ export default {
           input.checked ? cartSnArr.push(input.value) : '';
         });
       });
-      if(cartSnArr.length > 0) {
-        CartApi.remove(cartSnArr);
-        this.$router.go();
+      if(cartSnArr.length > 0 && confirm('상품을 삭제하시겠습니까?')) {
+          CartApi.remove(cartSnArr);
+          this.$router.go();
+      } else {
+        alert('삭제할 상품을 선택해주세요.')
       }
     }
   },

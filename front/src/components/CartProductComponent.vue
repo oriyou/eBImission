@@ -103,7 +103,8 @@ export default {
       EventBus.$emit('modifyCart', this.product, this.spinner);  // EventBus 이벤트 발행
     }, 500),
     deleteCartProduct: function() {
-      EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
+      if(confirm('상품을 삭제하시겠습니까?'))
+        EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
     },
     showSpinner: function(event) {
       this.spinner = event.target.parentNode.parentNode.querySelector('span');

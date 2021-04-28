@@ -40,18 +40,13 @@ export default {
     return {
       trNo: this.group[0].trNo,
       groupTotalPrice: 0,
-      checked: false,
+      checked: true,
     }
   },
   created: function() {
     this.calculateGroupPrice();
   },
   mixins: [priceMixin],
-  // computed: {
-  //   computedGroupPrice: function() {
-  //     return this.groupTotalPrice.toLocaleString('ko-KR');
-  //   }
-  // },
   methods: {
     calculateGroupPrice: function() {
       this.group.forEach(item => {
