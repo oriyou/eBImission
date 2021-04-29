@@ -33,6 +33,7 @@ export default {
   components: {
     CartProductComponent,
   },
+  mixins: [priceMixin],
   props: {
     group: Array,
   },
@@ -46,9 +47,15 @@ export default {
   created: function() {
     this.calculateGroupPrice();
   },
-  mixins: [priceMixin],
+  watch: {
+    group(value) {
+      console.log('watch group', value);
+      this.calculateGroupPrice();
+    }
+  },
   methods: {
     calculateGroupPrice: function() {
+      this.groupTotalPrice = 0;
       this.group.forEach(item => {
         this.groupTotalPrice += item.slPrc*item.odQty;
       })

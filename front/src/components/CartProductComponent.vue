@@ -30,14 +30,14 @@
     </div>
     <div class="cartPrice">
       <p>
-        <span :id="product.cartSn" style="display: none;">
+        <span :id="'s'+product.cartSn" style="display: none;">
           <v-progress-circular
             class="spinner"
             indeterminate
             color="primary"
           />
         </span>
-        <strong v-if="this.totalPrice">{{setComma(this.totalPrice)}}</strong>
+        <strong v-if="this.prodTotalPrice">{{setComma(this.prodTotalPrice)}}</strong>
         원
       </p>
     </div>
@@ -51,7 +51,8 @@
 
 <script>
 import {CartProductDto} from '~/model';
-import {EventBus, priceMixin} from '~/utils';
+import {priceMixin} from '~/utils';
+import {mapActions, mapMutations} from 'vuex';
 import _ from 'loadsh';
 
 export default {
@@ -61,12 +62,15 @@ export default {
   },
   data: function() {
     return {
-      totalPrice: 0,
+      prodTotalPrice: 0,
       spinner : '',
     }
   },
   created: function() {
-    this.totalPrice = this.product.slPrc * this.product.odQty;
+    this.calProdTotalPrice();
+  },
+  mounted: function() {
+    this.setSpinner();
   },
   mixins: [priceMixin],
   computed: {
@@ -75,40 +79,53 @@ export default {
     },
   },
   methods: {
-    plusOdQty: function(event) {
-      this.showSpinner(event);
-      
-      const price = this.product.slPrc*1; // 제품 한개 가격
-      this.product.odQty++; // 수량 ++
-      this.totalPrice += price; // 단품 총 가격에 더하기
-      EventBus.$emit('addTotalValue', this.product);  // EventBus 이벤트 발행
-      this.$emit('addGroupPrice', price); // 그룹가격 이벤트
-      this.debounceCart();  // debounce 호출
+    ...mapMutations('CartStore', ['addTotalValue', 'minusTotalValue']),
+    ...mapActions('CartStore', ['updateCart', 'deleteCart']),
+    calProdTotalPrice: function() {
+      this.prodTotalPrice = this.product.slPrc * this.product.odQty;
     },
-    minusOdQty: function(event) {
-      this.showSpinner(event); // spinner 보이기
-      
-      const price = this.product.slPrc*1; // 제품 한개 가격
+    setSpinner: function() {
+      this.spinner = document.querySelector(`#s${this.product.cartSn}`);
+    },
+    plusOdQty: function() {
+      this.showSpinner();
+      this.addTotalValue(this.product); //전체 가격, 수량
+      this.$emit('addGroupPrice', Number(this.product.slPrc)); // 그룹가격
+      this.plusProdTotalPriceAndOdQty();
+      this.debounceUpdate();
+    },
+    minusOdQty: function() { 
       if(this.product.odQty > 1) {
-        this.product.odQty--; // 수량 --
-        this.totalPrice -= price; // 단품 총 가격에서 빼기
-        EventBus.$emit('minusTotalValue', this.product);  // EventBus 이벤트 발행
-        this.$emit('minusGroupPrice', price); // 그룹가격 이벤트
-        this.debounceCart();  // debounce 호출
+        this.showSpinner(); // spinner 보이기
+        this.minusTotalValue(this.product); //전체 가격, 수량
+        this.$emit('minusGroupPrice', Number(this.product.slPrc)); // 그룹가격
+        this.minusProdTotalPriceAndOdQty(); // 상품 가격, 수량
+        this.debounceUpdate();
       } else {
         alert('최소1개까지 구매 가능한 상품입니다.');
       }
     },
-    debounceCart: _.debounce(function() {
-      EventBus.$emit('modifyCart', this.product, this.spinner);  // EventBus 이벤트 발행
+    debounceUpdate: _.debounce(function() {
+      // promise가 resolve를 통해 이행상태가 되면 then()을 통해 처리 결과값을 받을 수 있다.
+      this.updateCart(this.product).then(resp => resp.status === 200 ? this.hideSpinner() : '');
     }, 500),
     deleteCartProduct: function() {
       if(confirm('상품을 삭제하시겠습니까?'))
-        EventBus.$emit('deleteCartProduct', [this.product.cartSn]);
+        this.deleteCart([this.product.cartSn]);
     },
-    showSpinner: function(event) {
-      this.spinner = event.target.parentNode.parentNode.querySelector('span');
+    plusProdTotalPriceAndOdQty: function() {
+      this.prodTotalPrice += Number(this.product.slPrc);
+      this.product.odQty++;
+    },
+    minusProdTotalPriceAndOdQty: function() {
+      this.prodTotalPrice -= Number(this.product.slPrc);
+      this.product.odQty--;
+    },
+    showSpinner: function() {
       this.spinner.style.display="inline";
+    },
+    hideSpinner: function() {
+      this.spinner.style.display="none";
     }
   }
 }

@@ -9,7 +9,7 @@ class CartApi {
     return (await this.client.post('cart', cart)).data;
   }
 
-  async retrieveCart() {
+  async get() {
     return (await this.client.get('cart')).data;
   }
 
