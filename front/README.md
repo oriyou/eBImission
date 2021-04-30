@@ -1,5 +1,8 @@
 # ebi-mission
 
+## Vuex cycle
+![image](https://user-images.githubusercontent.com/59817080/116510327-b57e1d00-a8ff-11eb-9f42-aefdb647781c.png)
+
 ## Project setup
 ```
 yarn install
