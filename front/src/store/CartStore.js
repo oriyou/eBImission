@@ -23,6 +23,7 @@ const CartStore = {
       Object.keys(tempCart).forEach(key => {
         state.groupingCartArr.push(tempCart[key])
       });
+      
       return state.groupingCartArr;
     },
   },

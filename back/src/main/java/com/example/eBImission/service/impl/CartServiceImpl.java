@@ -44,9 +44,13 @@ public class CartServiceImpl implements CartService {
 
         Flux<Cart> cartProducts = cartRepository.findAllCartOrderByRegDttm();
 
+        // distinct() 를 통해 중복 제거 - distinct는 Object.hasCode()를 사용하여 중복체크
         Mono<CartProductInfoDto[]> productsInfo = webClientUtil.postRequest(END_POINT_URI, cartProducts.distinct(), Cart.class)
                 .bodyToMono(ProductInfoResponse.class)
-                .map(response -> response.getData())
+                .map(response -> {
+                    Arrays.stream(response.getData()).forEach(item -> log.info("Response Body: {}", item));
+                    return response.getData();
+                })
                 .cache();
 
         return cartProducts

@@ -23,7 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("om_cart")
-@EqualsAndHashCode(exclude = {"cartSn", "regDttm", "modDttm", "odQty"})
+@EqualsAndHashCode(exclude = {"cartSn", "lrtrNo", "mbNo", "odQty", "regDttm", "modDttm"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Cart {
 

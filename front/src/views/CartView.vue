@@ -97,8 +97,8 @@ export default {
     ...mapGetters('CartStore', {groupingCartArr : 'getGroupingCartArr'}),
   },
   methods: {
-    ...mapMutations('CartStore', ['initTotalValue']),
-    ...mapActions('CartStore',['deleteCart', 'retrieveCart']),
+    ...mapMutations('CartStore', ['initTotalValue']), // this.$store.commit('initTotalValue') -> this.initTotalValue();
+    ...mapActions('CartStore',['deleteCart', 'retrieveCart']),  // this.$store.dispatch('deleteCart') -> this.deleteCart();
     selectAll: function(event) {
       const isChecked = event.target.parentNode.querySelector('input[type=checkbox]').checked;
       event.target.parentNode.querySelector('input[type=checkbox]').checked = !isChecked;

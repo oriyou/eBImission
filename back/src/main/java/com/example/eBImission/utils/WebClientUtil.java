@@ -20,7 +20,7 @@ public class WebClientUtil {
 
     public <T> WebClient.ResponseSpec postRequest(String uri, Publisher<T> publisher, Class<T> bodyType) {
 
-        Flux.from(publisher).subscribe(e -> log.debug("RequestBody: {}", e.toString()));
+        Flux.from(publisher).subscribe(e -> log.info("RequestBody: {}", e.toString()));
 
         return webClient.mutate()
                 .build()
